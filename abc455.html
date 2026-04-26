@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>競プロ解説ノート</title>
+  <!-- MathJax (数式表示) -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!-- highlight.js (コードハイライトのみCDN利用) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+    });
+  </script>
+</head>
+<body>
+
+  <header>
+    <h1>競プロ解説ノート</h1>
+    <nav>
+      <a href="#problem-a">A</a> |
+      <a href="#problem-b">B</a> |
+      <a href="#problem-c">C</a> |
+      <a href="#problem-d">D</a>
+    </nav>
+    <hr>
+  </header>
+
+  <main>
+
+    <!-- ============== A問題 ============== -->
+    <section id="problem-a">
+      <h2>A問題</h2>
+
+      <h3>■ 考え方</h3>
+      <p><code>if</code> 文などを使って <strong>$A \neq B$ かつ $B = C$</strong> という条件を実装します。</p>
+      <p>条件式は <code>&amp;&amp;</code>(AND演算子) でつなぐことで、両方を同時に満たすかどうかを判定できます。</p>
+      <ul>
+        <li>「等しくない」は C++ では <code>!=</code></li>
+        <li>「等しい」は <code>==</code></li>
+        <li>条件を満たす → <code>Yes</code> / 満たさない → <code>No</code></li>
+      </ul>
+
+      <h3>■ コード (C++)</h3>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main() {
+    int A, B, C;
+    cin &gt;&gt; A &gt;&gt; B &gt;&gt; C;
+
+    if (A != B &amp;&amp; B == C) {
+        cout &lt;&lt; "Yes" &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; "No" &lt;&lt; endl;
+    }
+    return 0;
+}
+</code></pre>
+    </section>
+
+    <hr>
+
+    <!-- ============== B問題 ============== -->
+    <section id="problem-b">
+      <h2>B問題</h2>
+
+      <h3>■ 考え方</h3>
+      <p>イメージとして、下の図のように <strong>見ていく長方形の範囲を全部試す</strong>。赤色で囲んだ領域が今見ている長方形の範囲です。</p>
+
+      <p>まずは <strong>1行だけの長方形</strong> を左上から順に試していきます (グリッドの座標は左上を $(0,0)$ とします)。</p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0">
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="5" y="5" width="30" height="30" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(0,0)~(0,0)</figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="5" y="5" width="60" height="30" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(0,0)~(0,1)</figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="5" y="5" width="90" height="30" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(0,0)~(0,2)</figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="35" y="5" width="30" height="30" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(0,1)~(0,1)</figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="35" y="5" width="60" height="30" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(0,1)~(0,2)</figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="65" y="5" width="30" height="30" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(0,2)~(0,2)</figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="5" y="35" width="30" height="30" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(1,0)~(1,0)</figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="5" y="35" width="60" height="30" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(1,0)~(1,1)</figcaption>
+        </figure>
+
+        <span style="font-size:24px">・・・</span>
+
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="35" y="65" width="60" height="30" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(2,1)~(2,2)</figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="65" y="65" width="30" height="30" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(2,2)~(2,2)</figcaption>
+        </figure>
+      </div>
+
+      <p>次に <strong>2行以上の長方形</strong> に切り替えて、また同じように左上から順に試していきます。</p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0">
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="5" y="5" width="30" height="60" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(0,0)~(1,0)</figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="5" y="5" width="60" height="60" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(0,0)~(1,1)</figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="5" y="5" width="90" height="60" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(0,0)~(1,2)</figcaption>
+        </figure>
+
+        <span style="font-size:24px">・・・</span>
+
+        <figure style="margin:0;text-align:center">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <rect x="5" y="5" width="90" height="90" fill="white" stroke="#aaa"/>
+            <line x1="35" y1="5" x2="35" y2="95" stroke="#aaa"/>
+            <line x1="65" y1="5" x2="65" y2="95" stroke="#aaa"/>
+            <line x1="5" y1="35" x2="95" y2="35" stroke="#aaa"/>
+            <line x1="5" y1="65" x2="95" y2="65" stroke="#aaa"/>
+            <rect x="5" y="5" width="90" height="90" fill="none" stroke="red" stroke-width="3"/>
+          </svg>
+          <figcaption>(0,0)~(2,2)</figcaption>
+        </figure>
+      </div>
+
+      <p>このように見ていく長方形の範囲を全部列挙して、それぞれの長方形が <strong>点対称</strong> に塗られているかを判定し、条件を満たすなら答えに $+1$ します。</p>
+
+      <p>長方形の左上の行を $h_1$、下の行を $h_2$、左の列を $w_1$、右の列を $w_2$ として、外側の <strong>4重ループ</strong> で全ての長方形を列挙します。さらに長方形内の各マスを見るための <strong>2重ループ</strong> を内側に入れて、合計 6重ループの構成になります。</p>
+
+      <p>📝 <strong>ポイント:</strong> <em>点対称</em> の判定式は、実は <strong>問題文の中ですでに与えられている</strong> ので、自分で導出する必要はありません。問題文に書かれている式 <strong>マス $(i,j)$ とマス $(h_1+h_2-i,\; w_1+w_2-j)$ が同じ色</strong> をそのまま条件式として書けば OK です。</p>
+
+      <ul>
+        <li>長方形 $(h_1, w_1)$~$(h_2, w_2)$ の中を $i, j$ で走査</li>
+        <li>マス $(i, j)$ と点対称の位置にあるマス $(h_1 + h_2 - i,\; w_1 + w_2 - j)$ を比較 ← <em>問題文の式そのまま</em></li>
+        <li>すべて同じ色なら点対称 → 答えに $+1$</li>
+      </ul>
+
+      <h3>■ 使用するアルゴリズム</h3>
+      <ul>
+        <li><strong>多重ループ</strong> — 長方形の枚挙に4重ループ ($h_1, h_2, w_1, w_2$)、長方形内のマスの走査に2重ループ ($i, j$) を組み合わせて、合計6重ループで実装します。</li>
+      </ul>
+
+      <h3>■ コード (C++)</h3>
+<pre><code class="language-cpp">for (int h1 = 0; h1 &lt; h; h1++) {
+    for (int h2 = h1; h2 &lt; h; h2++) {
+        for (int w1 = 0; w1 &lt; w; w1++) {
+            for (int w2 = w1; w2 &lt; w; w2++) {
+                bool flag = true;
+                for (int i = h1; i &lt;= h2; i++)
+                    for (int j = w1; j &lt;= w2; j++)
+                        if (s[i][j] != s[h1 + h2 - i][w1 + w2 - j])
+                            flag = false;
+                if (flag) ans++;
+            }
+        }
+    }
+}
+</code></pre>
+    </section>
+
+    <hr>
+
+    <!-- ============== C問題 ============== -->
+    <section id="problem-c">
+      <h2>C問題</h2>
+
+      <h3>■ 考え方</h3>
+      <p>「整数 $x$ を選んで、$A_i = x$ なるすべての $i$ について $A_i$ を $0$ に置き換える」という操作をちょうど $K$ 回行ったあとの総和の最小値を求める問題です。</p>
+
+      <p>1回の操作で総和は <strong>(その値) × (その値の出現回数)</strong> だけ減ります。つまり、配列 $A$ の総和を最初に <code>ans</code> として持っておき、そこから「値 × 出現回数」が大きい順に $K$ 個選んで引けばよい、という形に言い換えられます。</p>
+
+      <p>具体的な手順は以下の通り。</p>
+      <ol>
+        <li>配列 <code>a</code> の総和を <code>ans</code> に入れる。</li>
+        <li>配列 <code>a</code> を小さい順にソートする (同じ値が連続して並ぶようにするため)。</li>
+        <li><strong>ランレングス圧縮</strong>を使って、(値, 出現回数) のペアの列 <code>ran</code> を作る。</li>
+        <li>新しい配列 <code>sum</code> を作って、各ペアについて <strong>値 × 出現回数</strong> の値を入れる。</li>
+        <li><code>sum</code> を <strong>大きい順</strong> にソートする。</li>
+        <li>$i = 0, 1, \dots, K-1$ について <code>ans -= sum[i]</code> する (ただし <code>sum.size()</code> が $K$ 未満の場合はそこまで)。</li>
+        <li>最後に <code>ans</code> を出力。</li>
+      </ol>
+
+      <h3>■ 使用するアルゴリズム</h3>
+      <ul>
+        <li><strong>ランレングス圧縮</strong> — ソート済み配列を頭から見て、直前と同じ値ならカウントを増やし、違う値なら新しいペアを追加するだけ。今回は <code>ran.back().first</code> と現在の値を比較して実装しています。</li>
+      </ul>
+
+      <h3>■ コード (C++)</h3>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+using ll = long long;
+
+int main() {
+    int n, k;
+    cin &gt;&gt; n &gt;&gt; k;
+
+    vector&lt;ll&gt; a(n);
+    ll ans = 0;
+    for (auto &amp;g : a) cin &gt;&gt; g, ans += g;   // ans = 総和
+
+    sort(a.begin(), a.end());                // 小さい順にソート
+
+    // ランレングス圧縮: (値, 出現回数) のペア列を作る
+    vector&lt;pair&lt;ll, ll&gt;&gt; ran;
+    for (int i = 0; i &lt; n; i++) {
+        if (!ran.empty() &amp;&amp; ran.back().first == a[i]) {
+            ran.back().second++;
+        } else {
+            ran.push_back({a[i], 1});
+        }
+    }
+
+    // 値 × 出現回数 を sum に入れる
+    vector&lt;ll&gt; sum;
+    for (auto &amp;g : ran) sum.push_back(g.first * g.second);
+
+    // 大きい順にソート
+    sort(sum.rbegin(), sum.rend());
+
+    // 上位 K 個を ans から引く
+    for (int i = 0; i &lt; min((int)sum.size(), k); i++) ans -= sum[i];
+
+    cout &lt;&lt; ans &lt;&lt; endl;
+}
+</code></pre>
+    </section>
+
+    <hr>
+
+    <!-- ============== D問題 ============== -->
+    <section id="problem-d">
+      <h2>D問題</h2>
+
+      <h3>■ 考え方</h3>
+      <p>カード $C_i$ と <em>その上に乗っているカードたち</em> をひとかたまりにして、別の山の一番上 (カード $P_i$ の上) に移す操作を $Q$ 回行います。</p>
+
+      <p>素直に「毎回カードを 1 枚ずつ持ち上げて移動」してしまうと、移動するカードの枚数が多いとき (たとえば 30 万枚をまるごと運ぶような場合) に時間がかかりすぎてしまい、$Q$ 回繰り返すとどう頑張っても間に合いません。</p>
+
+      <p>そこで実際にカードを動かす代わりに、<strong>「それぞれのカードについて『すぐ下にあるカード』と『すぐ上にあるカード』をメモしておく」</strong> という方法を使います。こうすると、何枚カードが乗っていようと <strong>1 回の操作で書き換える場所はたった数か所</strong> で済みます。</p>
+
+      <p>📝 <strong>使う配列</strong></p>
+      <ul>
+        <li><code>l[c]</code> = カード <code>c</code> の <strong>すぐ下</strong> にあるカードの番号 (下に何もなければ <code>-1</code>)</li>
+        <li><code>u[p]</code> = カード <code>p</code> の <strong>すぐ上</strong> にあるカードの番号 (上に何もなければ <code>-1</code>)</li>
+      </ul>
+
+      <h4>初期状態</h4>
+      <p>各山にはカード 1 枚ずつ。すべての <code>l[i]</code>, <code>u[i]</code> は <code>-1</code>。</p>
+
+      <figure style="margin:12px 0;text-align:center">
+        <svg width="360" height="170" viewBox="0 0 360 170">
+          <!-- pile bases -->
+          <line x1="15" y1="130" x2="65" y2="130" stroke="black" stroke-width="2"/>
+          <line x1="95" y1="130" x2="145" y2="130" stroke="black" stroke-width="2"/>
+          <line x1="175" y1="130" x2="225" y2="130" stroke="black" stroke-width="2"/>
+          <line x1="255" y1="130" x2="305" y2="130" stroke="black" stroke-width="2"/>
+          <!-- labels -->
+          <text x="40" y="155" text-anchor="middle" font-size="14">山1</text>
+          <text x="120" y="155" text-anchor="middle" font-size="14">山2</text>
+          <text x="200" y="155" text-anchor="middle" font-size="14">山3</text>
+          <text x="280" y="155" text-anchor="middle" font-size="14">山4</text>
+          <!-- cards -->
+          <rect x="15" y="95" width="50" height="35" fill="#fef3c7" stroke="black" stroke-width="2"/>
+          <text x="40" y="119" text-anchor="middle" font-size="20" font-weight="bold">1</text>
+          <rect x="95" y="95" width="50" height="35" fill="#fef3c7" stroke="black" stroke-width="2"/>
+          <text x="120" y="119" text-anchor="middle" font-size="20" font-weight="bold">2</text>
+          <rect x="175" y="95" width="50" height="35" fill="#fef3c7" stroke="black" stroke-width="2"/>
+          <text x="200" y="119" text-anchor="middle" font-size="20" font-weight="bold">3</text>
+          <rect x="255" y="95" width="50" height="35" fill="#fef3c7" stroke="black" stroke-width="2"/>
+          <text x="280" y="119" text-anchor="middle" font-size="20" font-weight="bold">4</text>
+        </svg>
+        <figcaption><code>l = [-1, -1, -1, -1]</code>, <code>u = [-1, -1, -1, -1]</code></figcaption>
+      </figure>
+
+      <h4>1回の操作 $(c, p)$ でやること</h4>
+      <ol>
+        <li><code>befo = l[c]</code> として、<strong>c が今まで乗っていたカード</strong> を覚えておく</li>
+        <li>もし <code>befo != -1</code> なら、<code>u[befo] = -1</code> にする<br>(c が抜けたので、c が乗っていたカードの上には今、何もない)</li>
+        <li><code>l[c] = p</code> にする (c のすぐ下は今や p)</li>
+        <li><code>u[p] = c</code> にする (p のすぐ上は今や c)</li>
+      </ol>
+
+      <p>📝 <strong>ここがポイント:</strong> c <em>の上に乗っているカードたち</em> のメモ (<code>u[c]</code>, <code>u[u[c]]</code> ...) は <strong>1 つも触る必要がありません</strong>。それらの「すぐ上」「すぐ下」の関係は変わっていないからです。c が p の上に移動するだけで、c の上の塊は <strong>自動的にいっしょに運ばれている</strong> ように扱えます。</p>
+
+      <h4>例: $N = 4$ で 2 回操作してみる</h4>
+
+      <p><strong>操作1: $(c, p) = (1, 2)$</strong> — カード 1 をカード 2 の上に移動</p>
+
+      <figure style="margin:12px 0;text-align:center">
+        <svg width="360" height="170" viewBox="0 0 360 170">
+          <line x1="15" y1="130" x2="65" y2="130" stroke="black" stroke-width="2"/>
+          <line x1="95" y1="130" x2="145" y2="130" stroke="black" stroke-width="2"/>
+          <line x1="175" y1="130" x2="225" y2="130" stroke="black" stroke-width="2"/>
+          <line x1="255" y1="130" x2="305" y2="130" stroke="black" stroke-width="2"/>
+          <text x="40" y="155" text-anchor="middle" font-size="14" fill="#888">山1 (空)</text>
+          <text x="120" y="155" text-anchor="middle" font-size="14">山2</text>
+          <text x="200" y="155" text-anchor="middle" font-size="14">山3</text>
+          <text x="280" y="155" text-anchor="middle" font-size="14">山4</text>
+          <!-- pile 2: 2 (bottom), 1 (top) -->
+          <rect x="95" y="95" width="50" height="35" fill="#fef3c7" stroke="black" stroke-width="2"/>
+          <text x="120" y="119" text-anchor="middle" font-size="20" font-weight="bold">2</text>
+          <rect x="95" y="60" width="50" height="35" fill="#fde68a" stroke="red" stroke-width="2"/>
+          <text x="120" y="84" text-anchor="middle" font-size="20" font-weight="bold">1</text>
+          <!-- pile 3 -->
+          <rect x="175" y="95" width="50" height="35" fill="#fef3c7" stroke="black" stroke-width="2"/>
+          <text x="200" y="119" text-anchor="middle" font-size="20" font-weight="bold">3</text>
+          <!-- pile 4 -->
+          <rect x="255" y="95" width="50" height="35" fill="#fef3c7" stroke="black" stroke-width="2"/>
+          <text x="280" y="119" text-anchor="middle" font-size="20" font-weight="bold">4</text>
+        </svg>
+        <figcaption><code>l = [2, -1, -1, -1]</code>, <code>u = [-1, 1, -1, -1]</code></figcaption>
+      </figure>
+
+      <p><strong>操作2: $(c, p) = (2, 3)$</strong> — カード 2 (とその上のカード 1) をカード 3 の上に移動</p>
+
+      <figure style="margin:12px 0;text-align:center">
+        <svg width="360" height="170" viewBox="0 0 360 170">
+          <line x1="15" y1="130" x2="65" y2="130" stroke="black" stroke-width="2"/>
+          <line x1="95" y1="130" x2="145" y2="130" stroke="black" stroke-width="2"/>
+          <line x1="175" y1="130" x2="225" y2="130" stroke="black" stroke-width="2"/>
+          <line x1="255" y1="130" x2="305" y2="130" stroke="black" stroke-width="2"/>
+          <text x="40" y="155" text-anchor="middle" font-size="14" fill="#888">山1 (空)</text>
+          <text x="120" y="155" text-anchor="middle" font-size="14" fill="#888">山2 (空)</text>
+          <text x="200" y="155" text-anchor="middle" font-size="14">山3</text>
+          <text x="280" y="155" text-anchor="middle" font-size="14">山4</text>
+          <!-- pile 3: 3, 2, 1 from bottom to top -->
+          <rect x="175" y="95" width="50" height="35" fill="#fef3c7" stroke="black" stroke-width="2"/>
+          <text x="200" y="119" text-anchor="middle" font-size="20" font-weight="bold">3</text>
+          <rect x="175" y="60" width="50" height="35" fill="#fde68a" stroke="red" stroke-width="2"/>
+          <text x="200" y="84" text-anchor="middle" font-size="20" font-weight="bold">2</text>
+          <rect x="175" y="25" width="50" height="35" fill="#fcd34d" stroke="#aaa" stroke-width="2" stroke-dasharray="4 2"/>
+          <text x="200" y="49" text-anchor="middle" font-size="20" font-weight="bold">1</text>
+          <!-- pile 4 -->
+          <rect x="255" y="95" width="50" height="35" fill="#fef3c7" stroke="black" stroke-width="2"/>
+          <text x="280" y="119" text-anchor="middle" font-size="20" font-weight="bold">4</text>
+        </svg>
+        <figcaption><code>l = [2, 3, -1, -1]</code>, <code>u = [-1, 1, 2, -1]</code><br><span style="font-size:13px;color:#666">点線のカード 1 は、操作 2 では <strong>l[1] も u[1] も触っていない</strong> のに、自動的に山 3 の頂上まで運ばれている</span></figcaption>
+      </figure>
+
+      <h4>各山の枚数の数え方</h4>
+      <p>すべての操作を終えたあと、山 $i$ の枚数を次のように求めます。</p>
+      <ul>
+        <li>カード $i$ が他のカードの上に乗っている (<code>l[i] != -1</code>) なら、山 $i$ にはもう何もない → <code>0</code> を出力</li>
+        <li>そうでなければ、カード $i$ が山 $i$ の一番下にいるということ。$i$ から <strong>「すぐ上のカード」をたどっていって</strong> (<code>cur = u[cur]</code>)、<code>-1</code> になるまでカウントすればその山の枚数になる</li>
+      </ul>
+      <p>各カードはちょうど 1 つの山にしかいないので、たどっていく合計の手間は全部合わせてもカードの枚数 $N$ 程度。<strong>全体としてかなり高速に動きます。</strong></p>
+
+      <h3>■ 使用するアルゴリズム</h3>
+      <ul>
+        <li><strong>「すぐ上」「すぐ下」のメモを持つ方法</strong> — それぞれのカードに「自分のすぐ下のカード番号」と「自分のすぐ上のカード番号」を覚えておくことで、何枚カードが乗っていてもひとかたまりの移動を <strong>数か所のメモを書き換えるだけ</strong> で済ませる方法です。</li>
+      </ul>
+
+      <h3>■ コード (C++)</h3>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+using ll = long long;
+
+int main() {
+    int n, q;
+    cin &gt;&gt; n &gt;&gt; q;
+
+    // l[c] = c の直下のカード, u[p] = p の直上のカード
+    vector&lt;int&gt; l(n, -1), u(n, -1);
+
+    while (q--) {
+        int c, p;
+        cin &gt;&gt; c &gt;&gt; p;
+        c--; p--;                       // 0-indexed に直す
+
+        int befo = l[c];                // c が今乗っているカード
+        if (befo != -1) u[befo] = -1;   // c が抜けた山の頂上をクリア
+        l[c] = p;                       // c は p の上に来た
+        u[p] = c;                       // p の上は c
+    }
+
+    // 各山 i の枚数を求める
+    for (int i = 0; i &lt; n; i++) {
+        if (l[i] != -1) {
+            // i が他のカードの上に乗っている → 山 i は空
+            cout &lt;&lt; 0;
+        } else {
+            // i から u[] を辿ってカウント
+            ll cnt = 0, cur = i;
+            while (cur != -1) {
+                cnt++;
+                cur = u[cur];
+            }
+            cout &lt;&lt; cnt;
+        }
+        cout &lt;&lt; " ";
+    }
+    cout &lt;&lt; endl;
+}
+</code></pre>
+    </section>
+
+  </main>
+
+</body>
+</html>
