@@ -23,6 +23,20 @@
       document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
     });
   </script>
+  <style>
+    nav {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      padding: 10px 0;
+      border-bottom: 1px solid #ccc;
+      z-index: 100;
+    }
+    /* セクション見出しがスティッキーnavの裏に隠れないようにオフセット */
+    section[id] {
+      scroll-margin-top: 60px;
+    }
+  </style>
 </head>
 <body>
 
@@ -32,14 +46,13 @@
       本人のコードはこちら
   </a>
     </h1>
-    <nav>
-      <a href="#problem-a">A</a> |
-      <a href="#problem-b">B</a> |
-      <a href="#problem-c">C</a> |
-      <a href="#problem-d">D</a>
-    </nav>
-    <hr>
   </header>
+  <nav>
+    <a href="#problem-a">A</a> |
+    <a href="#problem-b">B</a> |
+    <a href="#problem-c">C</a> |
+    <a href="#problem-d">D</a>
+  </nav>
 
   <main>
 
