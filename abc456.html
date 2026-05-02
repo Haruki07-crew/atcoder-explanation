@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>競プロ解説ノート</title>
+  <!-- MathJax (数式表示) -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!-- highlight.js (コードハイライトのみCDN利用) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+    });
+  </script>
+  <style>
+    nav.problem-nav {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: saturate(1.4) blur(10px);
+      -webkit-backdrop-filter: saturate(1.4) blur(10px);
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    }
+    nav.problem-nav .nav-label {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      color: #6b7280;
+      font-weight: 700;
+      margin-right: 4px;
+    }
+    nav.problem-nav .problem-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+      color: #4b5563;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease, color 0.2s ease;
+    }
+    nav.problem-nav .problem-link:hover {
+      background: linear-gradient(135deg, #e9d5ff, #c7d2fe);
+      color: #5b21b6;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.28);
+    }
+    nav.problem-nav .problem-link.active {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
+      border-color: transparent;
+    }
+    /* セクション見出しがスティッキーnavの裏に隠れないようにオフセット */
+    section[id] {
+      scroll-margin-top: 70px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>
+      <a href="https://atcoder.jp/contests/abc456/submissions?f.Task=&f.LanguageName=&f.Status=&f.User=hanaosi" target="_blank" rel="noopener noreferrer">
+      本人のコードはこちら
+  </a>
+    </h1>
+  </header>
+  <nav id="problemNav" class="problem-nav" aria-label="problem navigation"></nav>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const nav = document.getElementById('problemNav');
+      if (!nav) return;
+      const sections = [...document.querySelectorAll('section[id^="problem-"]')];
+      if (!sections.length) return;
+
+      const label = document.createElement('span');
+      label.className = 'nav-label';
+      label.textContent = 'PROBLEMS';
+      nav.appendChild(label);
+
+      const links = sections.map(sec => {
+        const letter = sec.id.replace('problem-', '').toUpperCase();
+        const a = document.createElement('a');
+        a.href = '#' + sec.id;
+        a.className = 'problem-link';
+        a.textContent = letter;
+        a.dataset.section = sec.id;
+        nav.appendChild(a);
+        return a;
+      });
+
+      const setActive = (id) => links.forEach(l => l.classList.toggle('active', l.dataset.section === id));
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries.filter(e => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) setActive(visible[0].target.id);
+      }, { rootMargin: '-25% 0px -55% 0px', threshold: [0, 0.25, 0.5, 1] });
+      sections.forEach(sec => observer.observe(sec));
+      setActive(sections[0].id);
+    });
+  </script>
+
+  <main>
+
+    <!-- ============== A問題 ============== -->
+    <section id="problem-a">
+      <h2>A問題</h2>
+
+      <h3>■ 考え方</h3>
+      <p>$1$〜$6$ の目を持つサイコロを $3$ 個振ったとき、出た目の合計が $X$ になることがあるかを判定する問題です。</p>
+      <p>サイコロ $3$ 個の出た目の合計は、最小で $1+1+1 = 3$、最大で $6+6+6 = 18$ になります。さらに、$3$〜$18$ の <strong>すべての整数</strong> がこの範囲内で実現可能なので、結局 <strong>$3 \leq X \leq 18$</strong> なら <code>Yes</code>、そうでなければ <code>No</code> を出力すればOKです。</p>
+      <ul>
+        <li>$X$ が $3$ 以上 $18$ 以下 → <code>Yes</code></li>
+        <li>そうでない (つまり $X = 1, 2, 19, 20$) → <code>No</code></li>
+        <li>条件式は <code>&amp;&amp;</code> (AND演算子) で 2 つの条件をつなぐ</li>
+      </ul>
+
+      <h3>■ コード (C++)</h3>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main() {
+    int x;
+    cin &gt;&gt; x;
+
+    if (x &gt;= 3 &amp;&amp; x &lt;= 18) {
+        cout &lt;&lt; "Yes" &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; "No" &lt;&lt; endl;
+    }
+    return 0;
+}
+</code></pre>
+    </section>
+
+    <hr>
+
+    <!-- ============== B問題 ============== -->
+    <section id="problem-b">
+      <h2>B問題</h2>
+
+      <h3>■ 考え方</h3>
+      <p>サイコロが 3 個あり、それぞれ 6 面を持っています。3 個を同時に振ったとき、出た目が <strong>「4, 5, 6 が 1 つずつ」</strong> になる確率を求める問題です。</p>
+
+      <p>確率 = <strong>(条件を満たす出方の数) ÷ (全部の出方の数)</strong> なので、次の 2 つを数えればよいです。</p>
+      <ul>
+        <li>分母: $6 \times 6 \times 6 = 216$ (どのサイコロも 6 通り)</li>
+        <li>分子: 3 つのサイコロから 1 面ずつ選んだとき、その目を並べて <strong>{4, 5, 6}</strong> になる組み合わせの数</li>
+      </ul>
+
+      <p>下の図のように <strong>サイコロ 1, 2, 3 から 1 面ずつ選ぶ</strong> 全部の組み合わせ (216 通り) を試して、選んだ 3 つの目をソートしたときに $(4, 5, 6)$ になっていれば「条件を満たす出方」としてカウントします。図ではサンプルとして次のサイコロを使います。</p>
+
+      <ul>
+        <li>サイコロ1: $1, 2, 3, 4, 5, 6$</li>
+        <li>サイコロ2: $4, 4, 5, 5, 6, 6$</li>
+        <li>サイコロ3: $1, 2, 3, 4, 5, 6$</li>
+      </ul>
+
+      <div style="display:flex;flex-direction:column;gap:14px;margin:12px 0">
+
+        <figure style="margin:0">
+          <svg width="320" height="135" viewBox="0 0 320 135">
+            <text x="5" y="30" font-size="13">サイコロ1</text>
+            <rect x="65"  y="10" width="40" height="35" fill="#fde68a" stroke="red" stroke-width="3"/><text x="85"  y="33" text-anchor="middle" font-size="16" font-weight="bold">1</text>
+            <rect x="105" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="125" y="33" text-anchor="middle" font-size="16">2</text>
+            <rect x="145" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="165" y="33" text-anchor="middle" font-size="16">3</text>
+            <rect x="185" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="205" y="33" text-anchor="middle" font-size="16">4</text>
+            <rect x="225" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="245" y="33" text-anchor="middle" font-size="16">5</text>
+            <rect x="265" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="285" y="33" text-anchor="middle" font-size="16">6</text>
+
+            <text x="5" y="70" font-size="13">サイコロ2</text>
+            <rect x="65"  y="50" width="40" height="35" fill="#fde68a" stroke="red" stroke-width="3"/><text x="85"  y="73" text-anchor="middle" font-size="16" font-weight="bold">4</text>
+            <rect x="105" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="125" y="73" text-anchor="middle" font-size="16">4</text>
+            <rect x="145" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="165" y="73" text-anchor="middle" font-size="16">5</text>
+            <rect x="185" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="205" y="73" text-anchor="middle" font-size="16">5</text>
+            <rect x="225" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="245" y="73" text-anchor="middle" font-size="16">6</text>
+            <rect x="265" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="285" y="73" text-anchor="middle" font-size="16">6</text>
+
+            <text x="5" y="110" font-size="13">サイコロ3</text>
+            <rect x="65"  y="90" width="40" height="35" fill="#fde68a" stroke="red" stroke-width="3"/><text x="85"  y="113" text-anchor="middle" font-size="16" font-weight="bold">1</text>
+            <rect x="105" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="125" y="113" text-anchor="middle" font-size="16">2</text>
+            <rect x="145" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="165" y="113" text-anchor="middle" font-size="16">3</text>
+            <rect x="185" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="205" y="113" text-anchor="middle" font-size="16">4</text>
+            <rect x="225" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="245" y="113" text-anchor="middle" font-size="16">5</text>
+            <rect x="265" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="285" y="113" text-anchor="middle" font-size="16">6</text>
+          </svg>
+          <figcaption>$(i, j, k) = (0, 0, 0)$ → 出目 $(1, 4, 1)$ → ソート $(1, 1, 4)$ → ✗</figcaption>
+        </figure>
+
+        <figure style="margin:0">
+          <svg width="320" height="135" viewBox="0 0 320 135">
+            <text x="5" y="30" font-size="13">サイコロ1</text>
+            <rect x="65"  y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="85"  y="33" text-anchor="middle" font-size="16">1</text>
+            <rect x="105" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="125" y="33" text-anchor="middle" font-size="16">2</text>
+            <rect x="145" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="165" y="33" text-anchor="middle" font-size="16">3</text>
+            <rect x="185" y="10" width="40" height="35" fill="#fde68a" stroke="red" stroke-width="3"/><text x="205" y="33" text-anchor="middle" font-size="16" font-weight="bold">4</text>
+            <rect x="225" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="245" y="33" text-anchor="middle" font-size="16">5</text>
+            <rect x="265" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="285" y="33" text-anchor="middle" font-size="16">6</text>
+
+            <text x="5" y="70" font-size="13">サイコロ2</text>
+            <rect x="65"  y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="85"  y="73" text-anchor="middle" font-size="16">4</text>
+            <rect x="105" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="125" y="73" text-anchor="middle" font-size="16">4</text>
+            <rect x="145" y="50" width="40" height="35" fill="#fde68a" stroke="red" stroke-width="3"/><text x="165" y="73" text-anchor="middle" font-size="16" font-weight="bold">5</text>
+            <rect x="185" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="205" y="73" text-anchor="middle" font-size="16">5</text>
+            <rect x="225" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="245" y="73" text-anchor="middle" font-size="16">6</text>
+            <rect x="265" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="285" y="73" text-anchor="middle" font-size="16">6</text>
+
+            <text x="5" y="110" font-size="13">サイコロ3</text>
+            <rect x="65"  y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="85"  y="113" text-anchor="middle" font-size="16">1</text>
+            <rect x="105" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="125" y="113" text-anchor="middle" font-size="16">2</text>
+            <rect x="145" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="165" y="113" text-anchor="middle" font-size="16">3</text>
+            <rect x="185" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="205" y="113" text-anchor="middle" font-size="16">4</text>
+            <rect x="225" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="245" y="113" text-anchor="middle" font-size="16">5</text>
+            <rect x="265" y="90" width="40" height="35" fill="#fde68a" stroke="red" stroke-width="3"/><text x="285" y="113" text-anchor="middle" font-size="16" font-weight="bold">6</text>
+          </svg>
+          <figcaption>$(i, j, k) = (3, 2, 5)$ → 出目 $(4, 5, 6)$ → ソート $(4, 5, 6)$ → ✓ カウント</figcaption>
+        </figure>
+
+        <figure style="margin:0">
+          <svg width="320" height="135" viewBox="0 0 320 135">
+            <text x="5" y="30" font-size="13">サイコロ1</text>
+            <rect x="65"  y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="85"  y="33" text-anchor="middle" font-size="16">1</text>
+            <rect x="105" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="125" y="33" text-anchor="middle" font-size="16">2</text>
+            <rect x="145" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="165" y="33" text-anchor="middle" font-size="16">3</text>
+            <rect x="185" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="205" y="33" text-anchor="middle" font-size="16">4</text>
+            <rect x="225" y="10" width="40" height="35" fill="white"   stroke="#aaa"/><text x="245" y="33" text-anchor="middle" font-size="16">5</text>
+            <rect x="265" y="10" width="40" height="35" fill="#fde68a" stroke="red" stroke-width="3"/><text x="285" y="33" text-anchor="middle" font-size="16" font-weight="bold">6</text>
+
+            <text x="5" y="70" font-size="13">サイコロ2</text>
+            <rect x="65"  y="50" width="40" height="35" fill="#fde68a" stroke="red" stroke-width="3"/><text x="85"  y="73" text-anchor="middle" font-size="16" font-weight="bold">4</text>
+            <rect x="105" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="125" y="73" text-anchor="middle" font-size="16">4</text>
+            <rect x="145" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="165" y="73" text-anchor="middle" font-size="16">5</text>
+            <rect x="185" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="205" y="73" text-anchor="middle" font-size="16">5</text>
+            <rect x="225" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="245" y="73" text-anchor="middle" font-size="16">6</text>
+            <rect x="265" y="50" width="40" height="35" fill="white"   stroke="#aaa"/><text x="285" y="73" text-anchor="middle" font-size="16">6</text>
+
+            <text x="5" y="110" font-size="13">サイコロ3</text>
+            <rect x="65"  y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="85"  y="113" text-anchor="middle" font-size="16">1</text>
+            <rect x="105" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="125" y="113" text-anchor="middle" font-size="16">2</text>
+            <rect x="145" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="165" y="113" text-anchor="middle" font-size="16">3</text>
+            <rect x="185" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="205" y="113" text-anchor="middle" font-size="16">4</text>
+            <rect x="225" y="90" width="40" height="35" fill="#fde68a" stroke="red" stroke-width="3"/><text x="245" y="113" text-anchor="middle" font-size="16" font-weight="bold">5</text>
+            <rect x="265" y="90" width="40" height="35" fill="white"   stroke="#aaa"/><text x="285" y="113" text-anchor="middle" font-size="16">6</text>
+          </svg>
+          <figcaption>$(i, j, k) = (5, 0, 4)$ → 出目 $(6, 4, 5)$ → ソート $(4, 5, 6)$ → ✓ カウント<br><span style="font-size:13px;color:#666">並びが違っても、ソートして $(4,5,6)$ になればカウント対象</span></figcaption>
+        </figure>
+
+        <div style="text-align:center;font-size:24px">・・・ (全 216 通り試す) ・・・</div>
+      </div>
+
+      <p>これは <code>i, j, k</code> の <strong>3重ループ</strong> で全部の組み合わせを試して、それぞれで 3 つの目を <code>vector</code> に入れて <code>sort</code> し、$(4, 5, 6)$ かどうかチェックすれば実装できます。</p>
+
+      <p>📝 <strong>ポイント:</strong> 「4, 5, 6 が 1 つずつ」というのは <strong>順番を問わない</strong> ので、$(4,5,6)$, $(5,4,6)$, $(6,4,5)$ などすべて条件を満たします。これを毎回 6 通り場合分けで書くのは大変なので、3 つの目を <strong>ソートしてから $(4,5,6)$ と一致するかを判定</strong> するのが楽です。</p>
+
+      <p>条件を満たす組み合わせの数を <code>cnt</code> としたら、求める確率は <code>cnt / 216.0</code> です。実数で出力するので <code>double</code> にキャストし、<code>fixed</code> + <code>setprecision</code> で十分な桁数を出力します。</p>
+
+      <h3>■ 使用するアルゴリズム</h3>
+      <ul>
+        <li><strong>全探索 (3重ループ)</strong> — 3 つのサイコロの面の選び方すべて (6×6×6 = 216 通り) を試して、条件を満たすものを数え上げます。順番を問わない条件なので、3 つの目をソートしてから比較するのがコツ。</li>
+      </ul>
+
+      <h3>■ コード (C++)</h3>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+#define all(v) v.begin(), v.end()
+
+int main() {
+    vector&lt;vector&lt;int&gt;&gt; a(3, vector&lt;int&gt;(6));
+    for (int i = 0; i &lt; 3; i++)
+        for (int j = 0; j &lt; 6; j++) cin &gt;&gt; a[i][j];
+
+    int cnt = 0;
+    // サイコロ1, 2, 3 から 1 面ずつ選ぶ全 6×6×6 = 216 通りを試す
+    for (int i = 0; i &lt; 6; i++)
+        for (int j = 0; j &lt; 6; j++)
+            for (int k = 0; k &lt; 6; k++) {
+                vector&lt;int&gt; sai = {a[0][i], a[1][j], a[2][k]};
+                sort(all(sai));                          // ソートして
+                if (sai[0] == 4 &amp;&amp; sai[1] == 5 &amp;&amp; sai[2] == 6)
+                    cnt++;                               // (4,5,6) ならカウント
+            }
+
+    double ans = (double)cnt / 216.0;
+    cout &lt;&lt; fixed &lt;&lt; setprecision(15) &lt;&lt; ans &lt;&lt; endl;
+}
+</code></pre>
+    </section>
+
+    <hr>
+
+    <!-- ============== C問題 ============== -->
+    <section id="problem-c">
+      <h2>C問題</h2>
+
+      <h3>■ 考え方</h3>
+      <p>$S$ の空でない部分文字列のうち、<strong>同じ文字が隣り合わないもの</strong> の個数を $\bmod\ 998244353$ で求める問題です。</p>
+
+      <p>📝 <strong>キーとなる観察:</strong> 部分文字列 $S[l..r]$ が条件を満たす ⇔ $S[l]$ と $S[l+1]$、$S[l+1]$ と $S[l+2]$、…、$S[r-1]$ と $S[r]$ がすべて異なる。<br>
+      つまり、条件を満たす部分文字列は <strong>「隣り合う文字がすべて違う、限界まで長い区間」</strong> にすっぽり収まっています。この区間を以下では <strong>「良い区間」</strong> と呼びます。</p>
+
+      <p>$S$ を「良い区間」たちに切り分けます。切れ目は <strong>$S[i] = S[i-1]$ となる位置 $i$ の直前</strong> です (そこから新しい区間が始まる)。</p>
+
+      <p>例として $S = $ <code>abcca</code> を見てみましょう。位置 $2$ と位置 $3$ がどちらも <code>c</code> なので、ここで区間が切れます。</p>
+
+      <figure style="margin:14px 0;text-align:center">
+        <svg width="380" height="160" viewBox="0 0 380 160">
+          <!-- cells -->
+          <rect x="40"  y="20" width="50" height="50" fill="#fde68a" stroke="black" stroke-width="2"/>
+          <text x="65"  y="55" text-anchor="middle" font-size="24" font-weight="bold">a</text>
+          <rect x="90"  y="20" width="50" height="50" fill="#fde68a" stroke="black" stroke-width="2"/>
+          <text x="115" y="55" text-anchor="middle" font-size="24" font-weight="bold">b</text>
+          <rect x="140" y="20" width="50" height="50" fill="#fde68a" stroke="black" stroke-width="2"/>
+          <text x="165" y="55" text-anchor="middle" font-size="24" font-weight="bold">c</text>
+          <rect x="190" y="20" width="50" height="50" fill="#bfdbfe" stroke="black" stroke-width="2"/>
+          <text x="215" y="55" text-anchor="middle" font-size="24" font-weight="bold">c</text>
+          <rect x="240" y="20" width="50" height="50" fill="#bfdbfe" stroke="black" stroke-width="2"/>
+          <text x="265" y="55" text-anchor="middle" font-size="24" font-weight="bold">a</text>
+
+          <!-- position labels -->
+          <text x="65"  y="88" text-anchor="middle" font-size="12" fill="#666">0</text>
+          <text x="115" y="88" text-anchor="middle" font-size="12" fill="#666">1</text>
+          <text x="165" y="88" text-anchor="middle" font-size="12" fill="#666">2</text>
+          <text x="215" y="88" text-anchor="middle" font-size="12" fill="#666">3</text>
+          <text x="265" y="88" text-anchor="middle" font-size="12" fill="#666">4</text>
+
+          <!-- break marker between pos 2 and 3 -->
+          <polygon points="190,8 178,0 202,0" fill="red"/>
+          <text x="190" y="14" text-anchor="middle" font-size="11" fill="red" font-weight="bold">切れ目 (c=c)</text>
+
+          <!-- run brackets -->
+          <line x1="42"  y1="105" x2="188" y2="105" stroke="#d97706" stroke-width="2"/>
+          <line x1="42"  y1="100" x2="42"  y2="110" stroke="#d97706" stroke-width="2"/>
+          <line x1="188" y1="100" x2="188" y2="110" stroke="#d97706" stroke-width="2"/>
+          <text x="115" y="125" text-anchor="middle" font-size="13" fill="#d97706" font-weight="bold">区間1 "abc" (L=3)</text>
+          <text x="115" y="143" text-anchor="middle" font-size="13" fill="#d97706">3·4/2 = 6 個</text>
+
+          <line x1="192" y1="105" x2="288" y2="105" stroke="#2563eb" stroke-width="2"/>
+          <line x1="192" y1="100" x2="192" y2="110" stroke="#2563eb" stroke-width="2"/>
+          <line x1="288" y1="100" x2="288" y2="110" stroke="#2563eb" stroke-width="2"/>
+          <text x="240" y="125" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="bold">区間2 "ca" (L=2)</text>
+          <text x="240" y="143" text-anchor="middle" font-size="13" fill="#2563eb">2·3/2 = 3 個</text>
+        </svg>
+        <figcaption>$S = $ <code>abcca</code> を良い区間に分割。答えは $6 + 3 = 9$ 個。</figcaption>
+      </figure>
+
+      <h4>長さ $L$ の良い区間からは何個の部分文字列が取れるか?</h4>
+      <p>長さ $L$ の良い区間の中の任意の連続部分は、それ自身も「同じ文字が隣り合わない」を満たしています。よって、その区間からは <strong>始点と終点の選び方の総数</strong>、つまり</p>
+      <p style="text-align:center"><strong>$1 + 2 + \cdots + L = L(L+1)/2$ 個</strong></p>
+      <p>の良い部分文字列が取れます。例えば $L = 3$ の良い区間 <code>abc</code> なら:</p>
+
+      <ul>
+        <li>長さ 1: <code>a</code>, <code>b</code>, <code>c</code> → 3 個</li>
+        <li>長さ 2: <code>ab</code>, <code>bc</code> → 2 個</li>
+        <li>長さ 3: <code>abc</code> → 1 個</li>
+        <li>合計 $3 + 2 + 1 = 6 = 3 \cdot 4 / 2$ 個</li>
+      </ul>
+
+      <h4>尺取り法 (two-pointer) で良い区間を切り出す</h4>
+      <p>左端 <code>l</code>、右端 <code>r</code> の 2 本のポインタを使います。<code>[l, r)</code> が今見ている良い区間です。</p>
+      <ol>
+        <li><code>l = 0</code>, <code>r = 1</code> でスタート (1 文字目だけは必ず良い区間)。</li>
+        <li><code>r &lt; |S|</code> かつ <code>S[r] != S[r-1]</code> の間、<code>r++</code> で右に伸ばす。</li>
+        <li>伸ばせなくなったら <code>[l, r)</code> が極大な良い区間。長さは <code>dis = r - l</code>。答えに <code>dis * (dis+1) / 2</code> を加える。</li>
+        <li>次の区間に移る: <code>l = r</code>, <code>r = l + 1</code>。</li>
+        <li><code>l &lt; |S|</code> である限り 2 に戻って繰り返す。</li>
+      </ol>
+
+      <p>📝 <strong>ポイント:</strong> $S[r] = S[r-1]$ になったとき、位置 $r$ は <strong>新しい良い区間の始点</strong> になります。1 文字を 2 つの区間で重ねて使うわけではないので、<code>l = r</code> と動かして OK です (区間 $[l, r)$ は半開区間で長さ $r-l$)。</p>
+
+      <p>$S$ の長さを $N$ とすると、<code>r</code> は最大でも $N$ までしか進まないので全体で $O(N)$。$N \leq 3 \times 10^5$ でも余裕で間に合います。</p>
+
+      <h3>■ 使用するアルゴリズム</h3>
+      <ul>
+        <li><strong>尺取り法 (two-pointer)</strong> — 左端 <code>l</code> と右端 <code>r</code> を使って、$S$ を「同じ文字が隣り合わない」極大な区間に切り分け、それぞれの長さ $L$ について $L(L+1)/2$ を答えに足し込みます。</li>
+      </ul>
+
+      <h3>■ コード (C++)</h3>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+using ll = long long;
+
+int main() {
+    string s;
+    cin &gt;&gt; s;
+
+    const ll MOD = 998244353;
+    int n = s.size();
+    int l = 0, r = 1;
+    ll ans = 0;
+
+    while (l &lt; n) {
+        // S[r] != S[r-1] の間、良い区間を右に伸ばす
+        while (r &lt; n &amp;&amp; s[r] != s[r-1]) r++;
+
+        // [l, r) が極大な良い区間。長さは dis
+        ll dis = r - l;
+        ll cnt = dis * (dis + 1) / 2 % MOD;     // L(L+1)/2 個
+        ans = (ans + cnt) % MOD;
+
+        // 次の良い区間に移る
+        l = r;
+        r = l + 1;
+    }
+
+    cout &lt;&lt; ans &lt;&lt; endl;
+}
+</code></pre>
+    </section>
+
+    <hr>
+
+    <!-- ============== D問題 ============== -->
+    <section id="problem-d">
+      <h2>D問題</h2>
+
+      <h3>■ 考え方</h3>
+      <p>C問題と問題文がよく似ていますが、こちらは <strong>「部分文字列」ではなく「部分列」</strong>。連続でなくてもよいので、$S$ の各文字を「取る / 取らない」を選んだ $2^N$ 通りの選び方の中から「同じ文字が隣り合わない」ものを数えることになります。$N \leq 3 \times 10^5$ なので素朴な全列挙は無理。何か <strong>賢い数え方</strong> が必要そうです。</p>
+
+      <h4>DPの発想に至るまで</h4>
+      <p>$S$ を左から 1 文字ずつ見ていって、<strong>各位置までで作れる良い部分列の個数を更新していく</strong>、という方針を考えてみます。位置 $i$ の文字 $S[i] = g$ にやってきたとき、できることは 2 つ。</p>
+      <ol>
+        <li>この文字を <strong>使わない</strong> → 既存の良い部分列はそのまま残る。</li>
+        <li>この文字を <strong>使う</strong> → 既存の良い部分列の末尾にこの $g$ をつなげる、または $g$ 単体で 1 文字の部分列を作る。</li>
+      </ol>
+
+      <p>ここで <strong>「つなげていいか」を判定するのに必要な情報は何か</strong> を考えると、<em>既存の部分列の末尾の文字さえわかればよい</em> ことに気づきます。「同じ文字が隣り合わない」という条件は、新しくつけ足す文字とその直前の文字 (= 既存部分列の末尾) だけで決まるからです。中身がどんなに長くても、間にどんな文字が入っていても関係ありません。</p>
+
+      <p>📝 <strong>キーとなる観察:</strong> 「これまでに作った良い部分列」は、<strong>末尾の文字でグループ分け</strong> しておけば十分。グループの中身を 1 つ 1 つ覚えておく必要はなく、<em>個数だけ</em> を持っておけば、新しい文字をつなげたときに何個増えるかがわかります。</p>
+
+      <p>$S$ に出てくる文字は <code>a, b, c</code> の 3 種類だけなので、グループも 3 つ。これでDPの形が見えてきました。</p>
+
+      <h4>持つ DP の値</h4>
+      <p>ある時点までの $S$ を見終わったときに、次の 3 つの値を持っておきます。</p>
+      <ul>
+        <li><code>ba</code> = これまで作れた良い部分列のうち、<strong>末尾が <code>a</code></strong> のものの個数</li>
+        <li><code>bb</code> = 同じく <strong>末尾が <code>b</code></strong></li>
+        <li><code>bc</code> = 同じく <strong>末尾が <code>c</code></strong></li>
+      </ul>
+      <p>合計 (答え) は <code>ans = ba + bb + bc</code> です。</p>
+
+      <h4>遷移: 新しい文字 $g$ を見たとき</h4>
+      <p>$S$ を左から 1 文字ずつ見ていきます。今見ている文字を $g$ としたとき、<strong>「この $g$ を新しい末尾として使う」良い部分列</strong> がいくつ新たに作れるか考えます。</p>
+
+      <p>末尾を $g$ にするには、今までの良い部分列のうち <strong>末尾が $g$ <em>以外</em></strong> のものの後ろにこの $g$ をくっつければ OK。さらに、この $g$ <strong>1 文字だけ</strong> でも良い部分列になります。よって新しく作れる個数は：</p>
+
+      <p style="text-align:center"><strong>(末尾が $g$ 以外の個数の合計) + 1</strong></p>
+
+      <p>例えば $g$ = <code>a</code> のときは：</p>
+      <ul>
+        <li>末尾が <code>b</code> の部分列に <code>a</code> をつけて末尾 <code>a</code> に → <code>bb</code> 通り</li>
+        <li>末尾が <code>c</code> の部分列に <code>a</code> をつけて末尾 <code>a</code> に → <code>bc</code> 通り</li>
+        <li>この <code>a</code> を 1 文字だけ取る → 1 通り</li>
+        <li>合計 <strong><code>bb + bc + 1</code></strong> を <code>ba</code> に足す</li>
+      </ul>
+
+      <p>📝 <strong>ここがポイント:</strong> 末尾が <code>a</code> の部分列に <code>a</code> をつけてはいけません (同じ文字が隣り合うので)。そのため <strong>「自分以外」の 2 つだけ</strong> を足すのです。<code>b</code>, <code>c</code> についても同様。</p>
+
+      <h4>例: $S = $ <code>aba</code> でやってみる</h4>
+      <p>初期状態 <code>ba=0, bb=0, bc=0, ans=0</code>。これを左から処理します。</p>
+
+      <figure style="margin:14px 0">
+        <table style="border-collapse:collapse;margin:0 auto;font-size:14px">
+          <thead>
+            <tr style="background:#f3f4f6">
+              <th style="border:1px solid #ccc;padding:6px 10px">処理する文字</th>
+              <th style="border:1px solid #ccc;padding:6px 10px">新しく作れる個数</th>
+              <th style="border:1px solid #ccc;padding:6px 10px"><code>ba</code></th>
+              <th style="border:1px solid #ccc;padding:6px 10px"><code>bb</code></th>
+              <th style="border:1px solid #ccc;padding:6px 10px"><code>bc</code></th>
+              <th style="border:1px solid #ccc;padding:6px 10px"><code>ans</code></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center">(初期)</td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center">―</td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center">0</td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center">0</td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center">0</td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center">0</td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center"><code>a</code> (位置 0)</td>
+              <td style="border:1px solid #ccc;padding:6px 10px"><code>bb+bc+1 = 0+0+1 = 1</code><br><span style="font-size:12px;color:#666">"a"</span></td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center"><strong>1</strong></td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center">0</td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center">0</td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center"><strong>1</strong></td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center"><code>b</code> (位置 1)</td>
+              <td style="border:1px solid #ccc;padding:6px 10px"><code>ba+bc+1 = 1+0+1 = 2</code><br><span style="font-size:12px;color:#666">"b", "ab"</span></td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center">1</td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center"><strong>2</strong></td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center">0</td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center"><strong>3</strong></td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center"><code>a</code> (位置 2)</td>
+              <td style="border:1px solid #ccc;padding:6px 10px"><code>bb+bc+1 = 2+0+1 = 3</code><br><span style="font-size:12px;color:#666">"a", "ba", "aba"</span></td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center"><strong>4</strong></td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center">2</td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center">0</td>
+              <td style="border:1px solid #ccc;padding:6px 10px;text-align:center"><strong>6</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <figcaption style="text-align:center;margin-top:8px">最後の <code>ans = 6</code> が答え。</figcaption>
+      </figure>
+
+      <p>念のため列挙して確認:</p>
+      <ul>
+        <li>位置 {0}: <code>a</code> ✓</li>
+        <li>位置 {1}: <code>b</code> ✓</li>
+        <li>位置 {2}: <code>a</code> ✓</li>
+        <li>位置 {0,1}: <code>ab</code> ✓</li>
+        <li>位置 {0,2}: <code>aa</code> ✗ (隣り合うので不可)</li>
+        <li>位置 {1,2}: <code>ba</code> ✓</li>
+        <li>位置 {0,1,2}: <code>aba</code> ✓</li>
+      </ul>
+      <p>良い部分列は 6 個。表の <code>ans = 6</code> と一致しています。</p>
+
+      <h4>計算量と mod</h4>
+      <p>各文字につき定数時間で更新できるので全体 $O(N)$。値はすぐに大きくなるので、毎回の更新で <strong>$\bmod\ 998244353$</strong> を取るのを忘れずに。</p>
+
+      <h3>■ 使用するアルゴリズム</h3>
+      <ul>
+        <li><strong>動的計画法 (DP)</strong> — 「末尾が <code>a</code> / <code>b</code> / <code>c</code> の良い部分列の個数」をそれぞれ持っておき、新しい文字 $g$ を見たら <strong>$g$ 以外の 2 つの和 + 1</strong> を $g$ の方に加算する、という遷移で全体を $O(N)$ で処理します。</li>
+      </ul>
+
+      <h3>■ コード (C++)</h3>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+using ll = long long;
+
+int main() {
+    string s;
+    cin &gt;&gt; s;
+
+    const ll MOD = 998244353;
+    ll ba = 0, bb = 0, bc = 0;   // 末尾が a / b / c の良い部分列の個数
+    ll ans = 0;
+
+    for (char g : s) {
+        if (g == 'a') {
+            ll add = (bb + bc + 1) % MOD;   // bb + bc + 1
+            ba  = (ba  + add) % MOD;
+            ans = (ans + add) % MOD;
+        } else if (g == 'b') {
+            ll add = (ba + bc + 1) % MOD;
+            bb  = (bb  + add) % MOD;
+            ans = (ans + add) % MOD;
+        } else { // g == 'c'
+            ll add = (ba + bb + 1) % MOD;
+            bc  = (bc  + add) % MOD;
+            ans = (ans + add) % MOD;
+        }
+    }
+
+    cout &lt;&lt; ans &lt;&lt; endl;
+}
+</code></pre>
+    </section>
+
+  </main>
+
+</body>
+</html>
