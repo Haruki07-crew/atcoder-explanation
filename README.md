@@ -3,6 +3,8 @@
 AtCoderの問題解説をHTML形式でまとめているリポジトリです。
 図解や数式を用いて、解法のプロセスを視覚的に分かりやすく解説することを目指しています。
 
+[https://haruki07-crew.github.io/atcoder-explanation/index.html](https://haruki07-crew.github.io/atcoder-explanation/index.html) ここから解説見れるよ！
+
 ## 制作体制について
 
 本リポジトリのコンテンツは、人間とAIの共同作業によって作成されています。
