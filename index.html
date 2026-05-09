@@ -46,29 +46,6 @@
       z-index: 1;
     }
 
-    header {
-      text-align: center;
-      padding: 36px 20px 14px;
-    }
-
-    h1 {
-      font-size: clamp(22px, 4.5vw, 36px);
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      background: linear-gradient(90deg, #a8d8ff 0%, #d4a8ff 50%, #ffaad4 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      filter: drop-shadow(0 0 18px rgba(170, 200, 255, 0.45));
-    }
-
-    .subtitle {
-      margin-top: 6px;
-      font-size: 12px;
-      color: rgba(190, 215, 255, 0.65);
-      letter-spacing: 0.25em;
-    }
-
     /* ===== ハンバーガーボタン ===== */
     .menu-btn {
       position: fixed;
@@ -107,14 +84,46 @@
     .menu-btn.open span:nth-child(2) { opacity: 0; }
     .menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
+    /* ===== ナビボタン (HOME / BACK) ===== */
+    .nav-btn {
+      position: fixed;
+      top: 18px;
+      z-index: 30;
+      height: 46px;
+      padding: 0 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(180, 200, 255, 0.4);
+      background: rgba(20, 10, 50, 0.45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #e6efff;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .nav-btn.show { display: inline-flex; }
+    .nav-btn:hover {
+      background: rgba(50, 30, 100, 0.55);
+      border-color: rgba(220, 200, 255, 0.7);
+      box-shadow: 0 0 18px rgba(170, 200, 255, 0.4);
+    }
+    #backBtn { right: 142px; }
+    #homeBtn { right: 18px; }
+
     /* ===== サイドパネル ===== */
     .menu-panel {
       position: fixed;
       top: 0;
       left: 0;
       height: 100vh;
-      width: 280px;
-      max-width: 80vw;
+      width: 300px;
+      max-width: 85vw;
       background: linear-gradient(180deg, rgba(15, 8, 40, 0.92), rgba(8, 4, 25, 0.92));
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
@@ -127,26 +136,48 @@
     }
     .menu-panel.open { transform: translateX(0); }
 
-    .menu-panel h2 {
-      font-size: 12px;
-      letter-spacing: 0.3em;
-      color: rgba(190, 215, 255, 0.6);
-      margin-bottom: 14px;
+    .menu-section { margin-bottom: 22px; }
+    .menu-section h2 {
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      color: rgba(190, 215, 255, 0.55);
+      margin-bottom: 10px;
       padding-left: 4px;
       font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-
-    .menu-panel .contest-list {
+    .menu-section h2 .all-link {
+      background: none;
+      border: none;
+      color: rgba(190, 215, 255, 0.7);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      cursor: pointer;
+      padding: 2px 6px;
+      font-family: inherit;
+      transition: color 0.2s ease;
+    }
+    .menu-section h2 .all-link:hover { color: #fff; }
+    .menu-section .contest-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
-
-    .menu-panel button {
+    .menu-section .empty {
+      font-size: 12px;
+      color: rgba(180, 200, 230, 0.4);
+      padding: 10px 14px;
+      border: 1px dashed rgba(180, 200, 255, 0.15);
+      border-radius: 10px;
+      letter-spacing: 0.12em;
+    }
+    .menu-panel button.contest-btn {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(170, 200, 255, 0.3);
       color: #e6efff;
-      padding: 12px 16px;
+      padding: 11px 14px;
       font-size: 14px;
       letter-spacing: 0.08em;
       font-weight: 600;
@@ -156,17 +187,36 @@
       transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
       font-family: inherit;
     }
-    .menu-panel button:hover {
+    .menu-panel button.contest-btn:hover {
       background: rgba(170, 200, 255, 0.15);
       border-color: rgba(220, 200, 255, 0.8);
       box-shadow: 0 0 20px rgba(170, 200, 255, 0.45);
       transform: translateX(3px);
     }
-    .menu-panel button.active {
+    .menu-panel button.contest-btn.active {
       background: linear-gradient(135deg, rgba(160, 100, 255, 0.35), rgba(100, 160, 255, 0.35));
       border-color: rgba(230, 210, 255, 1);
       box-shadow: 0 0 22px rgba(180, 140, 255, 0.6), inset 0 0 12px rgba(255, 255, 255, 0.15);
       color: #fff;
+    }
+    .menu-panel .home-link {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(170, 200, 255, 0.3);
+      color: #e6efff;
+      padding: 10px 14px;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-bottom: 18px;
+      font-family: inherit;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .menu-panel .home-link:hover {
+      background: rgba(170, 200, 255, 0.15);
+      border-color: rgba(220, 200, 255, 0.8);
     }
 
     /* ===== バックドロップ ===== */
@@ -186,13 +236,253 @@
       pointer-events: auto;
     }
 
-    /* ===== 現在のコンテスト表示 ===== */
-    .current-label {
+    /* ===== ホーム画面 ===== */
+    #homeView {
+      min-height: 100vh;
+      padding: 90px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero {
       text-align: center;
+      margin-bottom: 56px;
+      max-width: 820px;
+    }
+    .hero .badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(200, 220, 255, 0.3);
+      color: rgba(210, 225, 255, 0.8);
+      margin-bottom: 18px;
+      background: rgba(20, 10, 50, 0.4);
+      backdrop-filter: blur(8px);
+    }
+    .hero h1 {
+      font-size: clamp(32px, 6vw, 56px);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      background: linear-gradient(90deg, #a8d8ff 0%, #d4a8ff 50%, #ffaad4 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 24px rgba(170, 200, 255, 0.55));
+      line-height: 1.15;
+    }
+    .hero .tagline {
+      margin-top: 14px;
+      font-size: clamp(13px, 2vw, 16px);
+      color: rgba(200, 220, 255, 0.7);
+      letter-spacing: 0.18em;
+    }
+    .hero .desc {
+      margin-top: 22px;
+      font-size: 14px;
+      line-height: 1.9;
+      color: rgba(220, 230, 255, 0.6);
+      letter-spacing: 0.06em;
+    }
+
+    /* ===== 惑星カード（ホーム） ===== */
+    .planets {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      width: 100%;
+      max-width: 920px;
+      margin-bottom: 60px;
+    }
+    .planet-card {
+      position: relative;
+      padding: 38px 32px 34px;
+      border-radius: 24px;
+      border: 1px solid rgba(180, 200, 255, 0.22);
+      background: linear-gradient(160deg, rgba(30, 18, 70, 0.55), rgba(10, 6, 30, 0.65));
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      overflow: hidden;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      color: inherit;
+      font-family: inherit;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .planet-card::before {
+      content: "";
+      position: absolute;
+      top: -70px;
+      right: -70px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, var(--glow, rgba(150, 180, 255, 0.55)) 0%, transparent 70%);
+      filter: blur(8px);
+      opacity: 0.85;
+      pointer-events: none;
+      transition: transform 0.5s ease;
+    }
+    .planet-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(230, 210, 255, 0.6);
+      box-shadow: 0 16px 50px rgba(120, 90, 220, 0.35);
+    }
+    .planet-card:hover::before {
+      transform: scale(1.15) rotate(15deg);
+    }
+    .planet-card[data-cat="abc"] { --glow: rgba(120, 180, 255, 0.6); }
+    .planet-card[data-cat="arc"] { --glow: rgba(220, 130, 255, 0.55); }
+
+    .planet-card .cat-label {
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: rgba(210, 225, 255, 0.65);
+      margin-bottom: 8px;
+    }
+    .planet-card h3 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #ffffff, #d4c8ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .planet-card .cat-desc {
       font-size: 13px;
+      color: rgba(200, 220, 255, 0.6);
+      letter-spacing: 0.08em;
+      line-height: 1.7;
+      margin-bottom: 22px;
+    }
+    .planet-card .cat-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      color: rgba(210, 225, 255, 0.7);
+    }
+    .planet-card .count {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(170, 200, 255, 0.12);
+      border: 1px solid rgba(170, 200, 255, 0.25);
+    }
+    .planet-card .arrow {
+      font-size: 18px;
+      transition: transform 0.3s ease;
+    }
+    .planet-card:hover .arrow { transform: translateX(6px); }
+
+    /* ===== カテゴリ一覧画面 ===== */
+    #categoryView {
+      display: none;
+      min-height: 100vh;
+      padding: 90px 24px 60px;
+      flex-direction: column;
+      align-items: center;
+    }
+    #categoryView.show { display: flex; }
+
+    .cat-header {
+      text-align: center;
+      margin-bottom: 40px;
+      max-width: 820px;
+    }
+    .cat-header .badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(200, 220, 255, 0.3);
+      color: rgba(210, 225, 255, 0.8);
+      margin-bottom: 16px;
+      background: rgba(20, 10, 50, 0.4);
+    }
+    .cat-header h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      background: linear-gradient(90deg, #a8d8ff 0%, #d4a8ff 50%, #ffaad4 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 22px rgba(170, 200, 255, 0.5));
+    }
+    .cat-header p {
+      margin-top: 12px;
+      font-size: 13px;
+      color: rgba(200, 220, 255, 0.6);
+      letter-spacing: 0.12em;
+    }
+
+    .contest-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 980px;
+    }
+    .contest-tile {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(170, 200, 255, 0.28);
+      color: #e6efff;
+      padding: 22px 18px;
+      font-size: 17px;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      border-radius: 14px;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: center;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .contest-tile:hover {
+      background: rgba(170, 200, 255, 0.15);
+      border-color: rgba(230, 210, 255, 0.85);
+      box-shadow: 0 0 22px rgba(180, 200, 255, 0.5);
+      transform: translateY(-3px);
+    }
+    .contest-grid .empty-tile {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: rgba(200, 220, 255, 0.4);
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      padding: 40px 20px;
+      border: 1px dashed rgba(180, 200, 255, 0.18);
+      border-radius: 14px;
+    }
+
+    /* ===== コンテスト表示画面 ===== */
+    #contestView {
+      display: none;
+      flex-direction: column;
+      height: 100vh;
+      padding-top: 64px;
+    }
+    #contestView.show { display: flex; }
+
+    .current-label {
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      margin: 0;
+      padding: 0;
+      font-size: 12px;
       letter-spacing: 0.2em;
       color: rgba(200, 220, 255, 0.7);
-      padding: 2px 20px 18px;
+      pointer-events: none;
+      white-space: nowrap;
     }
     .current-label strong {
       color: #fff;
@@ -203,28 +493,35 @@
       font-weight: 700;
       letter-spacing: 0.15em;
     }
-
     iframe {
       display: block;
       width: 100%;
-      height: calc(100vh - 170px);
-      min-height: 480px;
+      flex: 1;
+      min-height: 0;
       border: none;
-      background: #fff;
+      background: #050310;
     }
 
     footer {
+      flex-shrink: 0;
       text-align: center;
-      padding: 8px 20px 24px;
-      font-size: 11px;
+      padding: 4px 20px 6px;
+      font-size: 10px;
       color: rgba(180, 200, 230, 0.45);
       letter-spacing: 0.15em;
     }
 
     @media (max-width: 480px) {
-      header { padding: 22px 16px 6px; }
-      iframe { height: calc(100vh - 150px); }
-      .menu-btn { top: 14px; left: 14px; width: 42px; height: 42px; }
+      #homeView, #categoryView { padding: 80px 18px 40px; }
+      .hero { margin-bottom: 36px; }
+      .planets { gap: 18px; margin-bottom: 36px; }
+      .planet-card { padding: 28px 22px 24px; }
+      .menu-btn, .nav-btn { top: 14px; }
+      .menu-btn { left: 14px; width: 42px; height: 42px; }
+      #homeBtn { right: 14px; height: 42px; padding: 0 14px; font-size: 12px; }
+      #backBtn { right: 124px; height: 42px; padding: 0 14px; font-size: 12px; }
+      .current-label { top: 24px; font-size: 11px; }
+      #contestView { padding-top: 60px; }
     }
   </style>
 </head>
@@ -237,33 +534,80 @@
     <span></span><span></span><span></span>
   </button>
 
+  <button id="backBtn" class="nav-btn" type="button" aria-label="一覧に戻る">← BACK</button>
+  <button id="homeBtn" class="nav-btn" type="button" aria-label="ホームに戻る">⌂ HOME</button>
+
   <aside id="menuPanel" class="menu-panel" aria-hidden="true">
-    <h2>SELECT CONTEST</h2>
-    <div class="contest-list" id="contestNav">
-      <button type="button" data-src="abc456.html" data-label="ABC456" class="active">ABC456</button>
-      <button type="button" data-src="abc455.html" data-label="ABC455">ABC455</button>
-    </div>
+    <button type="button" class="home-link" id="menuHomeLink">⌂ HOME</button>
+    <div id="menuSections"></div>
   </aside>
 
   <div id="backdrop" class="backdrop"></div>
 
   <main>
-    <header>
-      <h1>✦ 競プロ解説ノート ✦</h1>
-      <p class="subtitle">KYOPRO &middot; EXPLANATION &middot; SPACE</p>
-    </header>
+    <!-- ===== ホーム画面 ===== -->
+    <section id="homeView">
+      <div class="hero">
+        <span class="badge">KYOPRO · EXPLANATION · SPACE</span>
+        <h1>✦ 競プロ解説ノート ✦</h1>
+        <p class="tagline">A T C O D E R &nbsp; · &nbsp; E X P L O R E R</p>
+        <p class="desc">
+          AtCoder のコンテストの解説を宇宙の彼方に書き留めていく場所。<br>
+          下の惑星から、見たいシリーズを選んでください。
+        </p>
+      </div>
 
-    <p class="current-label">表示中: <strong id="currentLabel">ABC456</strong></p>
+      <div class="planets" id="planets"></div>
+    </section>
 
-    <iframe id="frame" src="abc456.html" title="contest"></iframe>
+    <!-- ===== カテゴリ一覧画面 ===== -->
+    <section id="categoryView">
+      <div class="cat-header">
+        <span class="badge" id="catBadge">CATEGORY</span>
+        <h1 id="catTitle">-</h1>
+      </div>
+      <div class="contest-grid" id="contestGrid"></div>
+    </section>
 
-    <footer>
-      &mdash; floating somewhere in the universe &mdash;
-    </footer>
+    <!-- ===== コンテスト表示画面 ===== -->
+    <section id="contestView">
+      <p class="current-label">表示中: <strong id="currentLabel">-</strong></p>
+      <iframe id="frame" src="about:blank" title="contest"></iframe>
+      <footer>
+        &mdash; floating somewhere in the universe &mdash;
+      </footer>
+    </section>
   </main>
 
 <script>
 (function () {
+  // ============ コンテストデータ ============
+  // 新しい解説を追加するときはここに追記するだけ
+  const CATEGORIES = [
+    {
+      id: 'abc',
+      label: 'ABC',
+      title: 'AtCoder Beginner Contest',
+      contests: [
+        { id: 'abc457', label: 'ABC457', src: 'abc457.html' },
+        { id: 'abc456', label: 'ABC456', src: 'abc456.html' },
+        { id: 'abc455', label: 'ABC455', src: 'abc455.html' },
+      ],
+    },
+    {
+      id: 'arc',
+      label: 'ARC',
+      title: 'AtCoder Regular Contest',
+      contests: [],
+    },
+  ];
+
+  const categoryById = new Map(CATEGORIES.map(c => [c.id, c]));
+  const allContests = new Map();
+  for (const cat of CATEGORIES) {
+    for (const c of cat.contests) allContests.set(c.id, { ...c, category: cat.id });
+  }
+
   // ============ 星のキャンバスアニメーション ============
   const canvas = document.getElementById('stars');
   const ctx = canvas.getContext('2d');
@@ -279,7 +623,6 @@
   resize();
   addEventListener('resize', resize);
 
-  // 普通の星
   const STAR_COUNT = 240;
   const stars = [];
   for (let i = 0; i < STAR_COUNT; i++) {
@@ -301,11 +644,10 @@
     return `rgba(255, 255, 255, ${a})`;
   }
 
-  // 流れ星
   let shooter = null;
   function maybeSpawnShooter() {
     if (!shooter && Math.random() < 0.004) {
-      const angle = (Math.PI / 6) + Math.random() * (Math.PI / 6); // 30〜60度
+      const angle = (Math.PI / 6) + Math.random() * (Math.PI / 6);
       const speed = 7 + Math.random() * 4;
       shooter = {
         x: -50,
@@ -360,7 +702,6 @@
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
       ctx.fill();
 
-      // 一部の星はちょっと光る
       if (s.r > 1.2) {
         ctx.beginPath();
         ctx.fillStyle = `rgba(255, 255, 255, ${s.a * 0.15})`;
@@ -375,6 +716,45 @@
     requestAnimationFrame(loop);
   }
   loop();
+
+  // ============ ホーム画面のレンダリング ============
+  const planetsEl = document.getElementById('planets');
+  for (const cat of CATEGORIES) {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'planet-card';
+    card.dataset.cat = cat.id;
+    card.innerHTML = `
+      <div class="cat-label">${cat.label}</div>
+      <h3>${cat.title}</h3>
+      <div class="cat-meta">
+        <span class="count">${cat.contests.length} 件</span>
+        <span class="arrow">→</span>
+      </div>
+    `;
+    card.addEventListener('click', () => showCategory(cat.id));
+    planetsEl.appendChild(card);
+  }
+
+  // ============ サイドメニューのレンダリング ============
+  const menuSectionsEl = document.getElementById('menuSections');
+  for (const cat of CATEGORIES) {
+    const section = document.createElement('div');
+    section.className = 'menu-section';
+    const list = cat.contests.length
+      ? `<div class="contest-list">${cat.contests.map(c =>
+            `<button type="button" class="contest-btn" data-id="${c.id}">${c.label}</button>`
+          ).join('')}</div>`
+      : `<div class="empty">Coming Soon</div>`;
+    section.innerHTML = `
+      <h2>
+        <span>${cat.label}</span>
+        <button type="button" class="all-link" data-cat="${cat.id}">ALL →</button>
+      </h2>
+      ${list}
+    `;
+    menuSectionsEl.appendChild(section);
+  }
 
   // ============ メニュー開閉 ============
   const menuBtn = document.getElementById('menuToggle');
@@ -392,33 +772,113 @@
   backdrop.addEventListener('click', () => setMenu(false));
   addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
 
-  // ============ コンテスト切り替え ============
-  const nav = document.getElementById('contestNav');
+  // ============ 画面切り替え ============
+  const homeView = document.getElementById('homeView');
+  const categoryView = document.getElementById('categoryView');
+  const contestView = document.getElementById('contestView');
   const frame = document.getElementById('frame');
   const currentLabel = document.getElementById('currentLabel');
+  const homeBtn = document.getElementById('homeBtn');
+  const backBtn = document.getElementById('backBtn');
+  const menuHomeLink = document.getElementById('menuHomeLink');
+  const catBadge = document.getElementById('catBadge');
+  const catTitle = document.getElementById('catTitle');
+  const contestGrid = document.getElementById('contestGrid');
 
-  function selectContest(btn, { closeMenu = true } = {}) {
-    if (!btn) return;
-    const isSame = btn.classList.contains('active');
-    nav.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    if (!isSame) frame.src = btn.dataset.src;
-    if (currentLabel) currentLabel.textContent = btn.dataset.label || btn.textContent;
-    const name = btn.dataset.src.replace(/\.html$/, '');
-    history.replaceState(null, '', '#' + name);
-    if (closeMenu) setMenu(false);
+  // 直前のカテゴリ（コンテスト表示中の BACK 用）
+  let lastCategoryId = null;
+
+  function hideAll() {
+    homeView.style.display = 'none';
+    categoryView.classList.remove('show');
+    contestView.classList.remove('show');
   }
 
-  nav.addEventListener('click', (e) => {
-    const btn = e.target.closest('button[data-src]');
-    if (btn) selectContest(btn);
+  function showHome({ updateHash = true } = {}) {
+    hideAll();
+    homeView.style.display = 'flex';
+    homeBtn.classList.remove('show');
+    backBtn.classList.remove('show');
+    frame.src = 'about:blank';
+    document.querySelectorAll('.contest-btn').forEach(b => b.classList.remove('active'));
+    if (updateHash) history.replaceState(null, '', location.pathname + location.search);
+    setMenu(false);
+  }
+
+  function showCategory(catId, { updateHash = true } = {}) {
+    const cat = categoryById.get(catId);
+    if (!cat) return;
+    hideAll();
+    categoryView.classList.add('show');
+    homeBtn.classList.add('show');
+    backBtn.classList.remove('show');
+    frame.src = 'about:blank';
+    lastCategoryId = catId;
+
+    catBadge.textContent = cat.label;
+    catTitle.textContent = cat.title;
+
+    contestGrid.innerHTML = cat.contests.length
+      ? cat.contests.map(c =>
+          `<button type="button" class="contest-tile" data-id="${c.id}">${c.label}</button>`
+        ).join('')
+      : `<div class="empty-tile">まだ解説はありません — Coming Soon</div>`;
+
+    document.querySelectorAll('.contest-btn').forEach(b => b.classList.remove('active'));
+    if (updateHash) history.replaceState(null, '', '#' + cat.id);
+    setMenu(false);
+    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+  }
+
+  function showContest(id, { updateHash = true } = {}) {
+    const c = allContests.get(id);
+    if (!c) return;
+    hideAll();
+    contestView.classList.add('show');
+    homeBtn.classList.add('show');
+    backBtn.classList.add('show');
+    lastCategoryId = c.category;
+
+    if (!frame.src.endsWith('/' + c.src) && !frame.src.endsWith(c.src)) frame.src = c.src;
+    currentLabel.textContent = c.label;
+    document.querySelectorAll('.contest-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.id === id);
+    });
+    if (updateHash) history.replaceState(null, '', '#' + c.id);
+    setMenu(false);
+  }
+
+  // カテゴリ画面のタイル
+  contestGrid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.contest-tile[data-id]');
+    if (btn) showContest(btn.dataset.id);
   });
 
-  // 初期表示: URL の hash があればそれを優先
+  // サイドメニュー
+  menuSectionsEl.addEventListener('click', (e) => {
+    const allBtn = e.target.closest('.all-link[data-cat]');
+    if (allBtn) { showCategory(allBtn.dataset.cat); return; }
+    const btn = e.target.closest('.contest-btn[data-id]');
+    if (btn) showContest(btn.dataset.id);
+  });
+
+  // ナビボタン
+  homeBtn.addEventListener('click', () => showHome());
+  backBtn.addEventListener('click', () => {
+    if (lastCategoryId) showCategory(lastCategoryId);
+    else showHome();
+  });
+  menuHomeLink.addEventListener('click', () => showHome());
+
+  // 初期表示: URL の hash を解釈
+  // #abc → ABC 一覧 / #abc456 → ABC456 解説
   const hash = location.hash.replace(/^#/, '');
-  if (hash) {
-    const target = nav.querySelector(`button[data-src="${hash}.html"]`);
-    if (target) selectContest(target, { closeMenu: false });
+  if (hash && allContests.has(hash)) {
+    showContest(hash, { updateHash: false });
+  } else if (hash && categoryById.has(hash)) {
+    showCategory(hash, { updateHash: false });
+  } else {
+    showHome({ updateHash: false });
   }
 })();
 </script>

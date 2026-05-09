@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>競プロ解説ノート</title>
+  <!-- MathJax (数式表示) -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!-- highlight.js (コードハイライトのみCDN利用) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+    });
+  </script>
+  <style>
+    /* ===== ベース (宇宙テーマ) ===== */
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      color: #e6eeff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+      line-height: 1.85;
+      font-size: 15px;
+    }
+    body {
+      background:
+        radial-gradient(ellipse at 25% 15%, rgba(90, 35, 150, 0.55) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 80%, rgba(35, 70, 170, 0.5) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, rgba(10, 5, 25, 1) 0%, #050310 70%);
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
+
+    main {
+      max-width: 920px;
+      margin: 18px auto 40px;
+      padding: 36px 36px 52px;
+      background: linear-gradient(180deg, rgba(22, 14, 44, 0.72), rgba(12, 8, 28, 0.78));
+      border: 1px solid rgba(180, 200, 255, 0.18);
+      border-radius: 22px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 14px 44px rgba(0, 0, 0, 0.45);
+    }
+
+    /* ===== ヘッダー: 本人のコードはこちら ===== */
+    header {
+      padding: 28px 22px 6px;
+      text-align: center;
+    }
+    header h1 { margin: 0; font-weight: normal; }
+    header h1 a {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 26px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 14px;
+      letter-spacing: 0.22em;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, rgba(140, 80, 220, 0.42), rgba(80, 130, 220, 0.42));
+      border: 1px solid rgba(220, 200, 255, 0.45);
+      box-shadow: 0 0 24px rgba(160, 130, 255, 0.4), inset 0 0 14px rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+    header h1 a::after  { content: "→"; transition: transform 0.2s ease; opacity: 0.85; }
+    header h1 a:hover {
+      background: linear-gradient(135deg, rgba(180, 110, 245, 0.55), rgba(110, 165, 245, 0.55));
+      box-shadow: 0 0 32px rgba(190, 150, 255, 0.65), inset 0 0 14px rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+    header h1 a:hover::after { transform: translateX(5px); }
+
+    /* ===== 上部のproblem-nav (ABC/A B C ...) ===== */
+    nav.problem-nav {
+      position: sticky;
+      top: 0;
+      background: rgba(15, 8, 35, 0.82);
+      backdrop-filter: saturate(1.4) blur(12px);
+      -webkit-backdrop-filter: saturate(1.4) blur(12px);
+      padding: 12px 22px;
+      border-bottom: 1px solid rgba(180, 200, 255, 0.18);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    nav.problem-nav .nav-label {
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      color: rgba(190, 215, 255, 0.6);
+      font-weight: 700;
+      margin-right: 4px;
+    }
+    nav.problem-nav .problem-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      color: #d8e2ff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      border: 1px solid rgba(170, 200, 255, 0.3);
+      transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease, color 0.2s ease, border-color 0.25s ease;
+    }
+    nav.problem-nav .problem-link:hover {
+      background: linear-gradient(135deg, rgba(160, 100, 255, 0.4), rgba(100, 160, 255, 0.4));
+      color: #fff;
+      border-color: rgba(220, 200, 255, 0.7);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(160, 120, 255, 0.45);
+    }
+    nav.problem-nav .problem-link.active {
+      background: linear-gradient(135deg, #a06bff, #6b8bff);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(160, 120, 255, 0.65);
+      border-color: transparent;
+    }
+
+    /* ===== タイポグラフィ ===== */
+    section[id] { scroll-margin-top: 80px; }
+    section h2 {
+      margin: 40px 0 18px;
+      font-size: 26px;
+      letter-spacing: 0.06em;
+      padding: 6px 0 6px 16px;
+      border-left: 4px solid;
+      border-image: linear-gradient(180deg, #a8d8ff, #d4a8ff, #ffaad4) 1;
+      background: linear-gradient(90deg, #ffffff, #d8c8ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 800;
+    }
+    section h3 {
+      margin: 28px 0 12px;
+      font-size: 18px;
+      color: #cad8ff;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+    section h4 {
+      margin: 22px 0 10px;
+      font-size: 16px;
+      color: #bccaff;
+      font-weight: 700;
+    }
+    p { margin: 12px 0; color: #ffffff; }
+    strong { color: #ffd6f0; font-weight: 700; }
+    ul, ol { margin: 12px 0 12px 28px; }
+    li { margin: 4px 0; color: #ffffff; }
+    main a { color: #aacfff; }
+    main a:hover { color: #d4ecff; }
+
+    /* ===== インラインコード ===== */
+    code {
+      background: rgba(170, 200, 255, 0.13);
+      border: 1px solid rgba(180, 200, 255, 0.22);
+      padding: 1px 7px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      color: #ffe2a8;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+
+    /* ===== コードブロック ===== */
+    pre {
+      margin: 16px 0;
+      border-radius: 12px;
+      border: 1px solid rgba(180, 200, 255, 0.18);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+    pre code.hljs {
+      padding: 18px 20px;
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+
+    /* ===== 区切り線 ===== */
+    hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(180, 200, 255, 0.35), transparent);
+      margin: 40px 0;
+    }
+
+    /* ===== SVG図・テーブルを含む figure は白いカードに ===== */
+    figure {
+      background: #ffffff;
+      color: #1f2937;
+      border-radius: 14px;
+      padding: 18px;
+      margin: 20px 0;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(180, 200, 255, 0.18);
+      overflow-x: auto;
+    }
+    figure figcaption {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #4b5563;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* MathJax の数式は本文色に追従 */
+    mjx-container { color: #e6eeff; }
+
+    @media (max-width: 600px) {
+      main { margin: 12px 10px 30px; padding: 24px 20px 36px; border-radius: 16px; }
+      nav.problem-nav { padding: 10px 14px; gap: 8px; }
+      nav.problem-nav .problem-link { width: 34px; height: 34px; font-size: 14px; }
+      header h1 a { font-size: 12px; padding: 11px 20px; letter-spacing: 0.18em; }
+      section h2 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>
+      <a href="https://atcoder.jp/contests/abc457/submissions?f.Task=&f.LanguageName=&f.Status=&f.User=hanaosi" target="_blank" rel="noopener noreferrer">
+      本人のコードはこちら
+  </a>
+    </h1>
+  </header>
+  <nav id="problemNav" class="problem-nav" aria-label="problem navigation"></nav>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const nav = document.getElementById('problemNav');
+      if (!nav) return;
+      const sections = [...document.querySelectorAll('section[id^="problem-"]')];
+      if (!sections.length) return;
+
+      const label = document.createElement('span');
+      label.className = 'nav-label';
+      label.textContent = 'PROBLEMS';
+      nav.appendChild(label);
+
+      const links = sections.map(sec => {
+        const letter = sec.id.replace('problem-', '').toUpperCase();
+        const a = document.createElement('a');
+        a.href = '#' + sec.id;
+        a.className = 'problem-link';
+        a.textContent = letter;
+        a.dataset.section = sec.id;
+        nav.appendChild(a);
+        return a;
+      });
+
+      const setActive = (id) => links.forEach(l => l.classList.toggle('active', l.dataset.section === id));
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries.filter(e => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) setActive(visible[0].target.id);
+      }, { rootMargin: '-25% 0px -55% 0px', threshold: [0, 0.25, 0.5, 1] });
+      sections.forEach(sec => observer.observe(sec));
+      setActive(sections[0].id);
+    });
+  </script>
+
+  <main>
+
+    <!-- ============== A問題 ============== -->
+    <section id="problem-a">
+      <h2>A問題</h2>
+
+      <h3>■ 考え方</h3>
+      <p>長さ $N$ の数列 $A = (A_1, A_2, \ldots, A_N)$ と整数 $X$ ($1 \leq X \leq N$) が与えられ、$A_X$ の値を出力する問題です。</p>
+
+      <p>📝 <strong>ここがポイント:</strong> 問題文の添字は <strong>1-indexed</strong>（$A_1$ が先頭）ですが、C++ の <code>vector</code> は <strong>0-indexed</strong>（<code>a[0]</code> が先頭）です。そのまま <code>a[x]</code> と書くと <strong>1 つ後ろの要素</strong> を取ってしまうので、<code>a[x - 1]</code> と書く必要があります。</p>
+
+      <h4>よくあるミス</h4>
+      <ul>
+        <li><code>cout &lt;&lt; a[x] &lt;&lt; endl;</code> と書いてしまう → <strong>1 個後ろ</strong> を見てしまう（しかも $X = N$ のときは範囲外アクセス）。</li>
+        <li>配列のサイズを <code>N + 1</code> にして 1-indexed で扱う方法もあるが、入力受け取りループや「<code>vector</code> 全体を回す」ときに混乱しやすいので、最初は <strong>0-indexed のまま $X - 1$ で参照する</strong> 書き方をおすすめ。</li>
+      </ul>
+
+      <h3>■ 使用するアルゴリズム</h3>
+      <ul>
+        <li><strong>配列の要素アクセス</strong> — 入力された $X$ をそのまま使わず、必ず <code>a[X - 1]</code> と書いて 1-indexed → 0-indexed に変換するのがコツ。</li>
+      </ul>
+
+      <h3>■ コード (C++)</h3>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+    vector&lt;int&gt; a(n);
+    for (int i = 0; i &lt; n; i++) cin &gt;&gt; a[i];
+
+    int x;
+    cin &gt;&gt; x;
+
+    cout &lt;&lt; a[x - 1] &lt;&lt; endl;   // 1-indexed → 0-indexed
+}
+</code></pre>
+    </section>
+
+    <hr>
+
+    <!-- ============== B問題 ============== -->
+    <section id="problem-b">
+      <h2>B問題</h2>
+
+      <h3>■ 考え方</h3>
+      <p>A 問題の <strong>2 次元バージョン</strong> です。$N$ 個の数列 $A_1, A_2, \ldots, A_N$ があり、それぞれの長さは $L_i$ で、$A_i = (A_{i,1}, A_{i,2}, \ldots, A_{i,L_i})$ です。整数 $X, Y$ が与えられたとき、$A_{X,Y}$ を出力します。</p>
+
+      <p>📝 <strong>ここがポイント:</strong> 各 $A_i$ は <strong>長さがバラバラ</strong> です（このような配列を「ジャグ配列」と呼びます）。普通の <code>vector&lt;vector&lt;int&gt;&gt;</code> なら各行の長さを自由に変えられるので、$L_i$ を読んで <code>a[i].resize(L_i)</code> で必要な分だけ確保するのがきれいな書き方です。</p>
+
+      <h4>実装の流れ</h4>
+      <ol>
+        <li><code>vector&lt;vector&lt;int&gt;&gt; a(n);</code> で「中身が空の <code>vector</code>」を $N$ 個用意。</li>
+        <li>各 $i$ について $L_i$ を読み、<code>a[i].resize(L_i);</code> でその行のサイズを確保。</li>
+        <li><code>for (int j = 0; j &lt; L; j++) cin &gt;&gt; a[i][j];</code> で要素を読み込む。</li>
+        <li>$X, Y$ を読んで <code>a[X - 1][Y - 1]</code> を出力。</li>
+      </ol>
+
+      <p>📝 <strong>ポイント:</strong> A 問題と同じく、$X$ も $Y$ も 1-indexed なので両方とも <strong>−1</strong> しないといけません。片方だけ忘れがちなので注意。</p>
+
+      <h4>計算量</h4>
+      <p>$L_i$ の総和が $2 \times 10^5$ までなので、入力読み込みも答えの取り出しも合計 $O(\sum L_i)$ で十分間に合います。</p>
+
+      <h3>■ 使用するアルゴリズム</h3>
+      <ul>
+        <li><strong>2 次元 (ジャグ) 配列の利用</strong> — <code>vector&lt;vector&lt;int&gt;&gt;</code> + <code>resize</code> で行ごとに長さの違う配列を扱い、$A_{X,Y}$ を <code>a[X - 1][Y - 1]</code> でアクセスする。</li>
+      </ul>
+
+      <h3>■ コード (C++)</h3>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+int main() {
+    int n;
+    cin &gt;&gt; n;
+
+    vector&lt;vector&lt;int&gt;&gt; a(n);
+    for (int i = 0; i &lt; n; i++) {
+        int L;
+        cin &gt;&gt; L;
+        a[i].resize(L);                          // 行ごとに長さを確保
+        for (int j = 0; j &lt; L; j++) cin &gt;&gt; a[i][j];  // L 個読み込む
+    }
+
+    int x, y;
+    cin &gt;&gt; x &gt;&gt; y;
+
+    cout &lt;&lt; a[x - 1][y - 1] &lt;&lt; endl;   // 両方とも 1-indexed → 0-indexed
+}
+</code></pre>
+    </section>
+
+    <hr>
+
+    <!-- ============== C問題 ============== -->
+    <section id="problem-c">
+      <h2>C問題</h2>
+
+      <h3>■ 考え方</h3>
+      <p>$N$ 本のジャグ配列 $A_1, A_2, \ldots, A_N$（長さは $L_i$）と、長さ $N$ の整数列 $C$ が与えられます。これらから次のように $B$ を作ります：</p>
+      <ul>
+        <li>$i = 1, 2, \ldots, N$ の順に「$A_i$ を末尾に連結」を <strong>$C_i$ 回</strong> 繰り返す。</li>
+      </ul>
+      <p>そして、できた $B$ の $K$ 番目の値 $B_K$ を答える問題です。</p>
+
+      <h4>素直にやると間に合わない</h4>
+      <p>$C_i$ は最大 $10^9$、$L_i$ の総和は $2 \times 10^5$ なので、$B$ の長さは最大 $\sum C_i L_i \approx 10^9 \times 2 \times 10^5 = 2 \times 10^{14}$。とても作れません。$C_i$ 回コピーするループも最大 $10^9$ 回回ってしまうので、<strong>素朴に $B$ を構築するのは TLE / MLE 確定</strong>。</p>
+
+      <h4>キーとなる観察: 「ブロック」で考える</h4>
+      <p>$B$ を作るとき、$i$ 番目のステップで <strong>$A_i$ を $C_i$ 回連結</strong> します。これを 1 つのかたまり (= ブロック $i$) と見ると、ブロック $i$ の長さは <code>$L_i \times C_i$</code> です。つまり $B$ は</p>
+      <p style="text-align:center">
+        <strong>ブロック1 ($L_1 \times C_1$ 個) → ブロック2 ($L_2 \times C_2$ 個) → ⋯ → ブロック$N$ ($L_N \times C_N$ 個)</strong>
+      </p>
+      <p>を順につないだだけのものです。</p>
+
+      <p>📝 <strong>ここがコツ:</strong> $K$ 番目の要素がどのブロックに入っているかは、ブロックを左から見ていって <strong>長さの累積を引き算していく</strong> だけで分かります。</p>
+
+      <h4>アルゴリズム</h4>
+      <ol>
+        <li>$i = 0, 1, \ldots, N - 1$ の順に見ていく。</li>
+        <li>現在のブロックの長さは <code>len = L[i] * C[i]</code>。
+          <ul>
+            <li>もし <code>K &lt;= len</code> なら、答えはこのブロック内にある。</li>
+            <li>そうでなければ <code>K</code> から <code>len</code> を引いて、次のブロックへ。</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h4>ブロック内のどこを見ればいい?</h4>
+      <p>ブロック $i$ は $A_i$ が $C_i$ 回繰り返されたものです。$A_i$ の長さは $L_i$ なので、ブロック内の位置 $K$ ($1$-indexed) は <strong>$A_i$ の中で $((K - 1) \bmod L_i)$ 番目（0-indexed）</strong> になります。</p>
+      <p>つまり、答えは <code>a[i][(K - 1) % L[i]]</code>。</p>
+
+      <h4>例: $A_1 = (10, 20, 30)$, $C_1 = 2$ のブロック</h4>
+      <p>このブロックの中身は <code>10, 20, 30, 10, 20, 30</code> の 6 個。ここで $K = 5$ が来たら、$5 - 1 = 4$、$4 \bmod 3 = 1$ なので <code>a[0][1] = 20</code>。実際に並べた 5 番目 (1-indexed) は <code>20</code> なので合っています。</p>
+
+      <h4>オーバーフローに注意</h4>
+      <p>$L_i \times C_i$ は最大 $2 \times 10^5 \times 10^9 = 2 \times 10^{14}$ になり、<code>int</code> (約 $2 \times 10^9$ まで) を超えます。$K$ もこの和まで取り得るので、<strong><code>K</code>, <code>L[i] * C[i]</code> はすべて <code>long long</code> で扱う</strong> 必要があります。掛け算する前に <code>(ll)</code> でキャストしないとそこでオーバーフローします。</p>
+
+      <h3>■ 使用するアルゴリズム</h3>
+      <ul>
+        <li><strong>ブロック分けによる位置特定</strong> — $B$ を実際に作らず、各ブロックの長さ $L_i \times C_i$ を順に引いて $K$ がどのブロックに落ちるかを特定し、最後に <code>a[i][(K - 1) % L[i]]</code> で値を取り出す $O(N)$ のアルゴリズム。</li>
+      </ul>
+
+      <h3>■ コード (C++)</h3>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+using ll = long long;
+
+int main() {
+    ll n, k;
+    cin &gt;&gt; n &gt;&gt; k;
+
+    vector&lt;int&gt; L(n);
+    vector&lt;vector&lt;ll&gt;&gt; a(n);
+    for (int i = 0; i &lt; n; i++) {
+        cin &gt;&gt; L[i];
+        a[i].resize(L[i]);
+        for (int j = 0; j &lt; L[i]; j++) cin &gt;&gt; a[i][j];
+    }
+
+    vector&lt;ll&gt; c(n);
+    for (int i = 0; i &lt; n; i++) cin &gt;&gt; c[i];
+
+    // ブロックを左から順に見ていき、K がどのブロックに落ちるかを探す
+    for (int i = 0; i &lt; n; i++) {
+        ll len = (ll)L[i] * c[i];          // ブロックの長さ (long long にキャストしてから掛ける)
+        if (k &lt;= len) {
+            // K はこのブロック内。A_i は C_i 回繰り返されているので mod L[i]
+            cout &lt;&lt; a[i][(k - 1) % L[i]] &lt;&lt; endl;
+            return 0;
+        }
+        k -= len;                          // 次のブロックへ
+    }
+}
+</code></pre>
+    </section>
+
+    <hr>
+
+    <!-- ============== D問題 ============== -->
+    <section id="problem-d">
+      <h2>D問題</h2>
+
+      <h3>■ 考え方</h3>
+      <p>長さ $N$ の数列 $A$ と整数 $K$ が与えられます。1 回の操作で「インデックス $i$ を選んで $A_i$ に <strong>$i$ を加える</strong>」（インデックス自体の値を加える！）ができ、これを最大 $K$ 回まで行います。最終的に $\min A_i$ をできるだけ大きくしたい、というのがゴールです。</p>
+
+      <p>📝 <strong>事前知識:</strong> この問題は <a href="https://atcoder.jp/contests/typical90/tasks/typical90_a" target="_blank" rel="noopener noreferrer">競プロ典型 90 問の "Yokan Party"</a> と同系統の <strong>「答えで二分探索」</strong> 問題です。Yokan Party の解説を読んでから戻ってくると、この問題の見え方が一気にクリアになります。</p>
+
+      <h4>「答えで二分探索」とは?</h4>
+      <p>欲しい答え（最終的な $\min A_i$ の最大値）を $x$ と置いたとき、$x$ には次のような性質があります：</p>
+      <ul>
+        <li>$x$ が小さければ「すべての $A_i$ を $x$ 以上にする」ことは <strong>容易</strong>（少ない操作で可能）。</li>
+        <li>$x$ が大きすぎると、$K$ 回の操作では足りず <strong>無理</strong>。</li>
+        <li>つまり「達成可能な $x$」と「不可能な $x$」の境目が 1 つだけ存在する <strong>単調性</strong> がある。</li>
+      </ul>
+      <p>この境目は <strong>二分探索</strong> で見つけられます。各候補 $x$ に対して「<code>check(x) = $K$ 回以内で全要素を $x$ 以上にできるか?</code>」が判定できれば OK。</p>
+
+      <h4><code>check(x)</code> の作り方</h4>
+      <p>各 $A_i$ について考えます。インデックス $i$ ($1 \leq i \leq N$) の要素には 1 回の操作で $i$ を加えるので、$A_i$ をちょうど $x$ 以上にするのに必要な最小操作回数は</p>
+      <p style="text-align:center">
+        <strong>$\left\lceil \dfrac{\max(0,\ x - A_i)}{i} \right\rceil$ 回</strong>
+      </p>
+      <p>です ($A_i \geq x$ ならそもそも不要なので $0$ 回)。これを $i = 1, \ldots, N$ について合計し、$\leq K$ なら達成可能。</p>
+
+      <p>📝 <strong>切り上げ割り算のテクニック:</strong> $\lceil a / b \rceil$ は <code>(a + b - 1) / b</code> と書ける（$a \geq 0$, $b \geq 1$ のとき）。この問題では $i$ が $1$-indexed で、コード上では <code>i</code> が $0$-indexed なので「実際に加える値」は <code>i + 1</code>。式は <code>((x - a[i]) + i) / (i + 1)</code> になります。</p>
+
+      <h4>二分探索の範囲</h4>
+      <ul>
+        <li>下限 (<code>ok</code>): <strong>$-1$</strong>（$x$ 以下を「常に達成可能」、つまり $x = 0$ なら 0 回で OK なので確実に成功する側）。</li>
+        <li>上限 (<code>ng</code>): <strong>$3 \times 10^{18}$</strong> 程度。$A_i \leq 10^{18}$ で、$K \leq 10^{18}$ 回の操作で各要素は最大 $10^{18} \times N$ くらいまで増える可能性があるが、実際の最適値はもう少し低くなるので、$3 \times 10^{18}$ で安全に届きます。</li>
+      </ul>
+
+      <h4>オーバーフロー対策</h4>
+      <p>$x$, $A_i$, 必要操作数 <code>plu</code> はどれも最大で $10^{18}$ 級になります。<code>cnt + plu</code> が <code>long long</code> の上限 ($\approx 9.2 \times 10^{18}$) を超える可能性があるので、足す前に</p>
+      <ul>
+        <li><code>plu &gt; k</code> （単独でもう $K$ を超えている）</li>
+        <li><code>cnt &gt; k - plu</code> （足したら $K$ を超える）</li>
+      </ul>
+      <p>のどちらかが成り立ったら即座に <code>false</code> を返すと安全です。<code>cnt + plu &gt; k</code> と書いてしまうと <strong>足し算した瞬間にオーバーフロー</strong> して間違った判定になる可能性があるので注意。</p>
+
+      <h4>計算量</h4>
+      <p>二分探索が約 $\log_2(3 \times 10^{18}) \approx 62$ 回。各回の <code>check</code> が $O(N)$ なので、全体で $O(N \log V)$（$V$ は探索範囲）。$N = 2 \times 10^5$ でも余裕で間に合います。</p>
+
+      <h3>■ 使用するアルゴリズム</h3>
+      <ul>
+        <li><strong>答えで二分探索 (parametric search)</strong> — 「全要素を $x$ 以上にできるか?」という判定問題に落とし、達成可能な最大 $x$ を <code>ok</code> / <code>ng</code> の二分探索で求める。</li>
+        <li><strong>切り上げ割り算</strong> — 各 $i$ について必要操作数を <code>(x - A_i + i) / (i + 1)</code> で計算（$0$-indexed なので $i + 1$ が「加える量」）。</li>
+        <li><strong>オーバーフロー回避</strong> — 累積を取るときは <code>cnt &gt; k - plu</code> の形で「足す前に」判定する。</li>
+      </ul>
+
+      <h3>■ コード (C++)</h3>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+using ll = long long;
+using ull = unsigned long long;
+
+ll n, k;
+vector&lt;ll&gt; a;
+
+// 「全要素を x 以上にできるか?」の判定
+bool check(ll x) {
+    ull cnt = 0;
+    for (int i = 0; i &lt; n; i++) {
+        if (a[i] &gt;= x) continue;                        // すでに x 以上なら不要
+        // i は 0-indexed なので、加える量は i+1
+        // 必要操作数 = ceil((x - a[i]) / (i+1)) = ((x - a[i]) + i) / (i+1)
+        ull plu = (ull)((ull)x - a[i] + i) / (ull)(i + 1);
+
+        // 足す前にオーバーフロー & K 超え判定
+        if (plu &gt; (ull)k || cnt &gt; (ull)k - plu) return false;
+        cnt += plu;
+    }
+    return true;
+}
+
+int main() {
+    cin &gt;&gt; n &gt;&gt; k;
+    a.resize(n);
+    for (int i = 0; i &lt; n; i++) cin &gt;&gt; a[i];
+
+    // ok = 達成可能な x の最大値, ng = 達成不能な x の最小値
+    ll ok = -1, ng = (ll)3e18;
+    while (ng - ok &gt; 1) {
+        ll m = (ng + ok) / 2;
+        if (check(m)) ok = m;
+        else          ng = m;
+    }
+
+    cout &lt;&lt; ok &lt;&lt; endl;
+}
+</code></pre>
+    </section>
+
+  </main>
+
+</body>
+</html>
