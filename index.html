@@ -818,6 +818,10 @@
   }
 
   searchInput.addEventListener('input', () => {
+    if (searchInput.value.trim() === '23071') {
+      location.href = 'new.html';
+      return;
+    }
     renderResults(search(searchInput.value));
   });
 
